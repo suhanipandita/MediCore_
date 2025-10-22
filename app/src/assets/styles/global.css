@@ -1,0 +1,25 @@
+:root {
+  /* Colors from your design */
+  --primary-teal-dark: #2A7B72;
+  --primary-teal-text: #2A7B72;
+  --background-light: #F8F9FA;
+  --text-primary: #1B3B38;
+  --text-secondary: #4C6764;
+  --white: #FFFFFF;
+  --border-light: #E0E0E0;
+}
+
+/* Reset and base styles */
+body {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  background-color: var(--background-light);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
