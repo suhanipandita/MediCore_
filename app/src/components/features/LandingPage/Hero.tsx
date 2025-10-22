@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Hero.module.css';
-import { MapPin, Search } from 'react-feather';
+import { Search } from 'react-feather';
 // Correct path relative to Hero.tsx
 import DoctorHeroImage from '../../../assets/images/doctor-hero.png';
 import location from '../../../assets/icons/location.svg';
