@@ -1,0 +1,132 @@
+.header {
+  width: 100%;
+  background-color: var(--white);
+  padding: 16px 32px; /* Adjust padding to match Figma */
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  position: sticky; /* Make header stick on scroll */
+  top: 0;
+  z-index: 100; /* Ensure it's above other content */
+}
+
+.container {
+  max-width: 1280px; /* Or match your design's container width */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 24px; /* Adjust size */
+  font-weight: 700;
+  color: var(--primary-teal-text);
+  letter-spacing: -0.5px; /* Optional: Adjust letter spacing */
+}
+
+.nav {
+  display: flex;
+  gap: 32px; /* Adjust spacing */
+}
+
+.navLink {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.2s ease-in-out;
+  padding: 8px 0; /* Add padding for better click area */
+}
+
+.navLink:hover {
+  color: var(--primary-teal-dark);
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.actionButton {
+  display: inline-flex; /* Use inline-flex for better alignment */
+  align-items: center;
+  justify-content: center; /* Center content */
+  gap: 0.5rem; /* ~8px space between icon and text/badge */
+  padding: 0.625rem 1rem; /* ~10px 16px - Adjust precisely */
+  border-radius: 20px; /* Rounded corners like the design */
+  border: 1px solid var(--primary-teal-dark); /* Border color from design */
+  background-color: var(--white);
+  cursor: pointer;
+  font-size: 0.9375rem; /* ~15px */
+  font-weight: 500;
+  color: var(--primary-teal-text); /* Text color from design */
+  transition: background-color 0.2s, border-color 0.2s;
+  white-space: nowrap; /* Prevent text wrapping */
+  font-family: inherit; /* Inherit font from body */
+  position: relative;
+}
+
+.actionButton:hover {
+  background-color: #f0f8f7;
+}
+
+.loginButton {
+  /* Inherit common styles from actionButton if desired, or define separately */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.5rem; /* Adjust padding */
+  border-radius: 20px;
+  border: 2px solid var(--primary-teal-dark); 
+  background-color: var(--white);
+  cursor: pointer;
+  font-size: 0.9375rem; /* ~15px */
+  font-weight: 600; /* Slightly bolder */
+  color: var(--text-primary);
+  transition: background-color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+  font-family: inherit;
+  color : var(--primary-teal-dark);
+}
+
+.loginButton:hover {
+  background-color: #f8f9fa; /* Slightly off-white */
+  border-color: #ced4da;
+}
+
+/* Icon styles */
+.icon {
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  display: block; /* Removes extra space below image */
+}
+
+/* Badge style for notification count */
+.badge {
+  /* Simple text style, adjust as needed */
+  font-weight: 600;
+  color: var(--primary-teal-text);
+  /* If you need a background circle like the old design: */
+  /* background-color: var(--primary-teal-dark); */
+  /* color: var(--white); */
+  /* border-radius: 50%; */
+  /* width: 18px; */
+  /* height: 18px; */
+  /* font-size: 11px; */
+  /* display: grid; */
+  /* place-items: center; */
+  /* position: absolute; */
+  /* top: -6px; */
+  /* right: -6px; */
+}
+
+/* Add media queries for responsiveness if needed */
+@media (max-width: 768px) {
+  .nav {
+    display: none; /* Example: Hide nav links on small screens */
+  }
+  .container {
+     /* Adjust padding for smaller screens */
+     padding: 0.75rem 1rem;
+  }
+}

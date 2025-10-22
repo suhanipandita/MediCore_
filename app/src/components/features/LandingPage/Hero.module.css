@@ -1,0 +1,186 @@
+.heroWrapper {}
+
+.heroContainer {
+  max-width: 1280px;
+  color: #2A7B72;
+  min-height: 540px;
+  /* Match header container width */
+  margin: 0 auto;
+  background-color: var(--primary-teal-dark);
+  border-radius: 24px;
+  padding: 64px 80px;
+  /* Inner padding */
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  /* Flexible columns */
+  gap: 48px;
+  align-items: center;
+  overflow: hidden;
+  /* Prevent image overflow if needed */
+  position: relative;
+  /* For image positioning */
+}
+
+.heroContent {
+  color: var(--white);
+  z-index: 1;
+  /* Keep content above potential image overlaps */
+}
+
+.heroTitle {
+  font-size: 56px;
+  /* Adjust font size */
+  font-weight: 700;
+  line-height: 64px;
+  /* Adjust line height */
+  margin: 0 16px 16px 0;
+  min-width: 560px;
+  font: #FFFFFF;
+}
+
+.heroSubtitle {
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0 0 32px 0;
+  opacity: 0.9;
+  min-width: 560px;
+  /* Limit width */
+  line-height: 1.6;
+  font: #D4E5E3;
+}
+
+.searchBar {
+  display: flex;
+  flex-wrap: wrap;
+  /* Allow wrapping on smaller screens if needed */
+  gap: 12px;
+  background-color: var(--primary-teal-dark);
+  border-radius: 12px;
+  padding: 8px;
+  max-width: 650px;
+  /* Adjust width */
+}
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1 1 200px;
+  /* Allow inputs to grow and shrink, base width 200px */
+  background-color: #F8F9FA;
+  /* Light background for inputs */
+  border-radius: 8px;
+  padding: 0 12px;
+  border: 1px solid #C1DAD7;
+  /* Placeholder for focus */
+  background-color: var(--primary-teal-dark);
+}
+
+.searchInputWrapper:focus-within {
+  border-color: var(--primary-teal-dark);
+  box-shadow: 0 0 0 2px rgba(42, 123, 114, 0.2);
+}
+
+.inputIcon {
+  color: var(--text-secondary);
+  margin-right: 8px;
+  flex-shrink: 0;
+  /* Prevent icon shrinking */
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 14px 14px;
+  font-size: 12px;
+  background-color: transparent;
+  color: #FFFFFF;
+  width: 100%;
+  font-family: inherit;
+}
+
+.searchInput::placeholder {
+  color: #FFFFFF;
+  opacity: 0.8;
+  font-family: inherit;
+}
+
+.searchButton {
+  border: none;
+  background-color: #FFFFFF;
+  color: #2A7B72;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+  /* Prevent button shrinking */
+}
+
+.searchButton:hover {
+  background-color: #1a4d4a;
+  /* Darker teal */
+}
+
+.browseLink {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 500;
+  display: inline-block;
+  margin-top: 24px;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.browseLink:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.heroImageContainer {
+  /* Position image slightly outside the container */
+  position: absolute;
+  right: 40px;
+  /* Adjust as needed */
+  bottom: 0;
+  max-width: 380px;
+  /* Adjust size */
+  z-index: 0;
+  /* Behind content */
+}
+
+.heroImage {
+  display: block;
+  width: 90%;
+  height: auto;
+}
+
+/* Add media query for smaller screens if needed */
+@media (max-width: 992px) {
+  .heroContainer {
+    grid-template-columns: 1fr;
+    /* Stack on smaller screens */
+    padding: 48px;
+    text-align: center;
+  }
+
+  .heroImageContainer {
+    position: static;
+    /* Reset positioning */
+    margin: 32px auto 0;
+    /* Center image below content */
+    max-width: 300px;
+  }
+
+  .searchBar {
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .heroTitle,
+  .heroSubtitle {
+    max-width: 100%;
+  }
+}

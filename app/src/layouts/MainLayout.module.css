@@ -1,0 +1,8 @@
+.mainContent {
+  width: 100%;
+  /* Add padding here if you want consistent padding around ALL pages */
+  /* padding: 2rem; */ /* Example: ~32px padding */
+  flex-grow: 1; /* Allows main content to fill remaining vertical space */
+  display: flex; /* Use flex if children need specific alignment */
+  flex-direction: column; /* Stack sections vertically */
+}

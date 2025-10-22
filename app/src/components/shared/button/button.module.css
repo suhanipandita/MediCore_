@@ -1,0 +1,48 @@
+/* Styles based on general modern design, adjust to match Figma */
+.button {
+  font-family: inherit; /* Use font from global.css */
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.2;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.primary {
+  background-color: var(--primary-teal-dark); /* Use color from global.css */
+  color: var(--white);
+}
+.primary:not(:disabled):hover {
+  background-color: #1e5a55; /* Slightly darker teal */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.secondary {
+  background-color: var(--white);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+}
+.secondary:not(:disabled):hover {
+  background-color: #f8f9fa; /* Slightly off-white */
+  border-color: #ced4da;
+}
+
+.danger {
+  background-color: #dc3545;
+  color: var(--white);
+}
+.danger:not(:disabled):hover {
+  background-color: #c82333;
+}

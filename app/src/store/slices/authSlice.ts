@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Session, User } from '@supabase/supabase-js';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import type { Session, User } from '@supabase/supabase-js';
 
 // Define the shape of your profile data
 interface UserProfile {

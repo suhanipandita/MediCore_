@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   /* Colors from your design */
   --primary-teal-dark: #2A7B72;
@@ -9,6 +15,9 @@
   --border-light: #E0E0E0;
 }
 
+html {
+  height: 100%; /* Ensure html takes full height */
+}
 /* Reset and base styles */
 body {
   margin: 0;
@@ -17,6 +26,15 @@ body {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+    width: 100%;
+    flex-grow: 1; /* Allows root to grow and fill space in flex body */
+    display: flex;
+    flex-direction: column;
 }
 
 a {
