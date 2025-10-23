@@ -140,7 +140,7 @@
 .heroImageContainer {
   /* Position image slightly outside the container */
   position: absolute;
-  right: 40px;
+  right: 100px;
   /* Adjust as needed */
   bottom: 0;
   max-width: 380px;
@@ -151,7 +151,7 @@
 
 .heroImage {
   display: block;
-  width: 90%;
+  width: 110%;
   height: auto;
 }
 

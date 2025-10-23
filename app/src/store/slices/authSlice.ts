@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { Session, User } from '@supabase/supabase-js';
 
 // Define the shape of your profile data
-interface UserProfile {
+export interface UserProfile {
   id: string;
   role: 'Admin' | 'Doctor' | 'Nurse' | 'Patient' | null;
   first_name?: string;

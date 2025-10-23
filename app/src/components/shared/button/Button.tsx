@@ -1,12 +1,13 @@
 import React from 'react';
-import styles from './Button.module.css'; // Import CSS Module
+import styles from './Button.module.css';
 
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary' | 'danger'; // Add more variants if needed
+  variant?: 'primary' | 'secondary' | 'danger';
   type?: 'button' | 'submit';
   disabled?: boolean;
+  className?: string; // ✅ Add this line
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -15,9 +16,10 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   type = 'button',
   disabled = false,
+  className = '', // ✅ Allow external classes
 }) => {
-  // Get the correct class from the CSS module
-  const buttonClass = `${styles.button} ${styles[variant]}`;
+  // Merge CSS module class + external className
+  const buttonClass = `${styles.button} ${styles[variant]} ${className}`.trim();
 
   return (
     <button

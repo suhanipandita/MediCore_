@@ -1,0 +1,270 @@
+/* Ensure global styles are applied */
+@import '../assets/styles/global.css';
+/* Check if necessary based on your setup */
+
+/* Main container using flexbox for the two columns */
+.pageContainer {
+    display: flex;
+    min-height: 100vh;
+    /* Full viewport height */
+    width: 100%;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    /* Use font from global */
+    background-color: var(--background-light);
+    /* Fallback background */
+}
+
+/* Left section styling (green background) */
+.leftSection {
+    flex: 0 0 45%;
+    /* Fixed width 45% */
+    background-color: var(--primary-teal-dark);
+    /* Use variable #1f7a6d */
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Center content vertically */
+    padding: 2rem 3rem;
+    /* Padding inside the section */
+    box-sizing: border-box;
+    text-align: left;
+    /* Align text to the left */
+}
+
+/* Logo/Title styling */
+.leftTitle {
+    font-size: 1.75rem;
+    /* ~28px */
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Image styling */
+.image {
+    width: 100%;
+    /* Make image responsive */
+    max-width: 500px;
+    /* Limit max width */
+    height: auto;
+    margin: 0 0;
+    /* Space above/below image */
+    align-self: center;
+    /* Center image if container is wider */
+}
+
+/* Subtitle styling */
+.leftSubtitle {
+    font-size: 1.25rem;
+    /* ~20px */
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+/* Paragraph text styling */
+.leftText {
+    font-size: 0.9375rem;
+    /* ~15px */
+    color: rgba(255, 255, 255, 0.8);
+    /* Slightly transparent white */
+    line-height: 1.6;
+    max-width: 400px;
+    /* Limit text width */
+    margin-bottom: 2rem;
+    /* Space below text */
+}
+
+/* Carousel dots styling */
+.carouselDots {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    margin-left: 15px;
+    /* Adjust positioning */
+    align-items: center;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+}
+
+.activeDot {
+    width: 24px;
+    /* Make it longer */
+    height: 8px;
+    border-radius: 10px;
+    /* Rounded rectangle */
+    background-color: white;
+    /* Active dot color */
+}
+
+/* Right section styling (white background) */
+.rightSection {
+    flex: 1 1 55%;
+    /* Takes remaining 55%, allows shrinking/growing */
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Center content vertically */
+    align-items: center;
+    /* Center content horizontally */
+    padding: 2rem;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Wrapper to control max width of content on the right */
+.rightContentWrapper {
+    width: 100%;
+    max-width: 400px;
+    /* Limit width of text and buttons */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Title on the right */
+.rightTitle {
+    font-size: 28px;
+    /* ~26px */
+    font-weight: 700;
+    /* Bolder */
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+/* Text below title on the right */
+.rightText {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    /* Use secondary color */
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    /* Space below text */
+}
+
+/* Container for the role buttons */
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* Stack buttons */
+    gap: 1rem;
+    /* Space between buttons */
+    margin-bottom: 2rem;
+    /* Space below buttons */
+}
+
+/* Styling for the role buttons */
+.roleButton {
+    width: 100%;
+    /* Full width */
+    padding: 0.875rem 1.5rem;
+    /* ~14px 24px padding */
+    font-size: 1rem;
+    /* ~16px */
+    font-weight: 500;
+    color: var(--primary-teal-dark);
+    /* Default text color */
+    background-color: var(--white);
+    border: 1px solid var(--primary-teal-dark);
+    /* Border color */
+    border-radius: 15px;
+    /* Slightly rounded */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    text-align: center;
+}
+
+.roleButton:hover {
+    background-color: var(--primary-teal-dark);
+    /* Fill on hover */
+    color: var(--white);
+    /* White text on hover */
+}
+
+/* Signup link style */
+.signupLink {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+    /* Space above */
+}
+
+.signupLink a {
+    color: var(--primary-teal-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.signupLink a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pageContainer {
+        flex-direction: column;
+        /* Stack sections vertically */
+    }
+
+    .leftSection,
+    .rightSection {
+        flex: 1 0 auto;
+        /* Allow sections to take needed height */
+        width: 100%;
+        /* Full width when stacked */
+    }
+
+    .leftSection {
+        min-height: 40vh;
+        /* Give left section some height */
+        padding: 2rem;
+        text-align: center;
+        /* Center text */
+    }
+
+    .leftTitle {
+        font-size: 1.5rem;
+    }
+
+    .leftSubtitle {
+        font-size: 1.1rem;
+    }
+
+    .leftText {
+        max-width: none;
+        /* Allow text to take more width */
+        align-self: center;
+        margin-bottom: 1rem;
+    }
+
+    .image {
+        max-width: 250px;
+        /* Smaller image */
+        margin: 1rem 0;
+    }
+
+    .carouselDots {
+        justify-content: center;
+        /* Center dots */
+    }
+
+    .rightSection {
+        min-height: 60vh;
+        /* Give right section more height */
+        justify-content: flex-start;
+        /* Align content to top */
+        padding-top: 3rem;
+    }
+
+    .rightContentWrapper {
+        max-width: 90%;
+        /* Allow slightly wider content */
+    }
+}

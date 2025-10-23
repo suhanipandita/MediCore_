@@ -32,7 +32,7 @@ const Header: React.FC = () => {
         <div className={styles.userActions}>
           <button
             className={styles.loginButton} // Use a specific style
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/select-role')}
           >
             Login / Signup
           </button>

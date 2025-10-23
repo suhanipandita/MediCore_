@@ -1,26 +1,29 @@
 import { useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import { supabase } from './services/supabaseClient'; // Correct path
-import { useAppDispatch, useAppSelector } from './store/hooks'; // Correct path
-import { setAuth, setProfile, setLoading } from './store/slices/authSlice'; // Correct path
+import { supabase } from './services/supabaseClient';
+import { useAppDispatch, useAppSelector } from './store/hooks';
+import { setAuth, setProfile, setLoading } from './store/slices/authSlice';
+import type { UserProfile } from './store/slices/authSlice';
 
 // Layouts
-import MainLayout from './layouts/MainLayout'; // Import your layout (will be created next)
+import MainLayout from './layouts/MainLayout';
 
 // Pages
-import LandingPage from './pages/LandingPage'; // Import your landing page (will be created next)
-// import Login from './pages/Login'; // Placeholder - Create this page later
-// import Dashboard from './pages/Dashboard'; // Placeholder - Create this page later
+import LandingPage from './pages/LandingPage';
+import RoleSelection from './pages/RoleSelection';
+import PatientLogin from './pages/PatientLogin';
+import AdminLogin from './pages/AdminLogin';
+import StaffLogin from './pages/StaffLogin';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
 
-// Placeholder components for other routes (REMOVE LATER)
+// Placeholder component (optional, can be removed if not used elsewhere)
 const Placeholder = ({ title }: { title: string }) => (
-  <div style={{ padding: '2rem', textAlign: 'center' }}>
+  <div style={{ padding: '2rem', textAlign: 'center', flexGrow: 1 }}>
     <h2>{title} Page</h2>
     <p>Content coming soon...</p>
   </div>
 );
-const Login = () => <Placeholder title="Login" />; // TEMPORARY
-const Dashboard = () => <Placeholder title="Dashboard" />; // TEMPORARY
 
 
 function App() {
@@ -29,99 +32,121 @@ function App() {
   const { session, isLoading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    // Check initial session
+    // --- Initial Session Check ---
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       dispatch(setAuth({ session: currentSession, user: currentSession?.user ?? null }));
-      if (currentSession) {
+      if (currentSession?.user?.id) {
         fetchProfile(currentSession.user.id);
       } else {
-        dispatch(setLoading(false)); // Not logged in, stop loading
+        dispatch(setLoading(false));
       }
     });
 
-    // Listen for auth changes
+    // --- Auth State Change Listener ---
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, currentSession) => {
         const userChanged = session?.user?.id !== currentSession?.user?.id;
         dispatch(setAuth({ session: currentSession, user: currentSession?.user ?? null }));
 
-        if (currentSession && userChanged) {
-           await fetchProfile(currentSession.user.id);
-           // Optional: Redirect to dashboard on login
-           // if (window.location.pathname === '/login') navigate('/dashboard');
+        if (currentSession?.user?.id && userChanged) {
+          await fetchProfile(currentSession.user.id);
+          // Redirect to dashboard after login, regardless of previous page
+          // Check necessary to prevent redirect loop if already on dashboard
+          if (window.location.pathname !== '/dashboard') {
+            navigate('/dashboard', { replace: true });
+          }
+        } else if (!currentSession && userChanged) {
+          dispatch(setProfile(null));
+          // Redirect to role selection if logged out from protected area
+          if (window.location.pathname.startsWith('/dashboard')) {
+            navigate('/select-role', { replace: true });
+          }
         } else if (!currentSession) {
-          dispatch(setProfile(null)); // Clear profile on logout
-          // Optional: Redirect to login on logout if user is on a protected page
-          // if (window.location.pathname.startsWith('/dashboard')) navigate('/login');
+          dispatch(setLoading(false));
         }
       }
     );
-
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [dispatch, navigate, session]); // Added session as dependency as it's used in the effect
+  }, [dispatch, navigate, session]);
 
 
   const fetchProfile = async (userId: string) => {
-     if (!userId) {
-        dispatch(setLoading(false));
-        return;
-     }
+    if (!userId) {
+      dispatch(setLoading(false));
+      return;
+    }
     dispatch(setLoading(true));
     try {
-      // **IMPORTANT:** Check YOUR Supabase table/column names in migrations/20251021102306_remote_schema.sql
-      // It looks like your table is 'users' and columns are 'id', 'role', maybe 'full_name'? Adjust accordingly.
       const { data, error, status } = await supabase
-        .from('users') // *** Verify this table name ***
-        .select(`id, role, first_name, last_name`) // *** Verify these column names ***
+        .from('users') // Verify table name
+        .select('id, role') // Verify column names
         .eq('id', userId)
         .single();
 
-      if (error && status !== 406) { // 406 means no row found, which is okay
-        console.error('Error fetching profile:', error);
-        // Don't throw here, just log or handle gracefully
+      if (error && status !== 406) {
+        console.error('Supabase error fetching profile:', error);
       }
-      // Cast 'data' to the correct UserProfile type from authSlice
-      dispatch(setProfile(data as any)); // Use `as UserProfile` if UserProfile type is defined correctly
+      dispatch(setProfile(data as UserProfile | null));
 
     } catch (error) {
-      console.error('Error in fetchProfile:', error);
-       dispatch(setProfile(null)); // Clear profile on error
+      console.error('Error in fetchProfile function:', error);
+      dispatch(setProfile(null));
     } finally {
       dispatch(setLoading(false));
     }
   };
 
-  // Basic Loading indicator while checking auth
-  // You might see "Loading..." briefly before the page renders
-  if (isLoading && !session) { // Only show loading if not already logged in/session restored
-      return <div>Loading...</div>; // Replace with a proper spinner later
+
+  if (isLoading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
   }
 
   return (
     <Routes>
-      {/* Public routes using MainLayout (Header + Footer) */}
+      {/* --- Public Routes --- */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<LandingPage />} />
-        {/* These placeholders will be replaced later */}
         <Route path="/find-doctors" element={<Placeholder title="Find Doctors" />} />
         <Route path="/appointments" element={<Placeholder title="Appointments" />} />
         <Route path="/my-health" element={<Placeholder title="My Health" />} />
       </Route>
 
-      {/* Auth routes (usually without MainLayout) */}
-      {/* If logged in, redirect from /login to /dashboard */}
-      <Route path="/login" element={!session ? <Login /> : <Navigate to="/dashboard" replace />} />
-      {/* <Route path="/signup" element={!session ? <Signup /> : <Navigate to="/dashboard" replace />} /> */}
+      {/* --- Authentication Routes --- */}
+      {/* Role Selection Page */}
+      <Route
+        path="/select-role"
+        element={!session ? <RoleSelection /> : <Navigate to="/dashboard" replace />}
+      />
+      {/* Specific Login/Signup Pages (linked from RoleSelection) */}
+      <Route
+        path="/login-patient"
+        element={!session ? <PatientLogin /> : <Navigate to="/dashboard" replace />}
+      />
+      <Route
+        path="/login-staff"
+        element={!session ? <StaffLogin /> : <Navigate to="/dashboard" replace />}
+      />
+      <Route
+        path="/login-admin"
+        element={!session ? <AdminLogin /> : <Navigate to="/dashboard" replace />}
+      />
+      <Route
+        path="/signup"
+        element={!session ? <Signup /> : <Navigate to="/dashboard" replace />}
+      />
+      {/* Add Forgot Password route if needed */}
+      {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
 
-      {/* Protected Routes - Render Dashboard only if logged in, else redirect to /login */}
+      {/* --- Protected Routes --- */}
       <Route
         path="/dashboard"
-        element={session ? <Dashboard /> : <Navigate to="/login" replace />}
+        // If not logged in, redirect to Role Selection page
+        element={session ? <Dashboard /> : <Navigate to="/select-role" replace />}
       />
 
-      {/* Fallback route - Redirect unknown paths to home page */}
+      {/* --- Fallback Route --- */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
