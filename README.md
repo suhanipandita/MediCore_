@@ -28,20 +28,20 @@ This project consists of two main parts: the supabase backend and the app fronte
 
 - Start Supabase: From the project's root directory, run:
 
-_Bash_
+_Bash_  
 `supabase start`
 
 **_Get API Keys: Once started, the terminal will output your local API details. Copy the API URL and the anon key. You will need them for the frontend._**
 
 It will look like this:
 
-`Started Supabase local development setup.
+`Started Supabase local development setup.`
 
-API URL: http://127.0.0.1:{PORT}
-DB URL: postgresql://postgres:postgres@127.0.0.1:{PORT}/postgres
-Studio URL: http://127.0.0.1:{PORT}
-anon key: [YOUR_ANON_KEY]
-service_role key: [YOUR_SERVICE_KEY]`
+`API URL: http://127.0.0.1:{PORT}`
+`DB URL: postgresql://postgres:postgres@127.0.0.1:{PORT}/postgres`
+`Studio URL: http://127.0.0.1:{PORT}`
+`anon key: [YOUR_ANON_KEY]`
+`service_role key: [YOUR_SERVICE_KEY]`
 
 #### 2. Run the React Frontend
 
@@ -60,14 +60,14 @@ _Bash_
 - Add Keys to .env.local: Paste the keys from Step 1 into this file:
 
 _Code snippet_
-`VITE_SUPABASE_URL=http://127.0.0.1:{PORT}
-VITE_SUPABASE_ANON_KEY=[YOUR_ANON_KEY]`
+`VITE_SUPABASE_URL=http://127.0.0.1:{PORT}`
+`VITE_SUPABASE_ANON_KEY=[YOUR_ANON_KEY]`
 
 - (Replace [YOUR_ANON_KEY] with the actual key from your terminal output.)
 
 - Start the Dev Server:
 
-_Bash_
+_Bash_  
 `npm run dev`
 
 #### 3. Access Your Application
@@ -77,3 +77,4 @@ Your full-stack application is now running:
 Frontend (React App): Open http://localhost:{PORT} in your browser.
 
 Backend (Supabase Studio): You can manage your local database at http://localhost:{PORT}.
+
