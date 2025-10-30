@@ -59,7 +59,7 @@ _Bash_
 
 - Add Keys to .env.local: Paste the keys from Step 1 into this file:
 
-_Code snippet_
+_Code snippet_  
 `VITE_SUPABASE_URL=http://127.0.0.1:{PORT}`  
 `VITE_SUPABASE_ANON_KEY=[YOUR_ANON_KEY]`  
 
@@ -77,5 +77,6 @@ Your full-stack application is now running:
 Frontend (React App): Open http://localhost:{PORT} in your browser.
 
 Backend (Supabase Studio): You can manage your local database at http://localhost:{PORT}.
+
 
 
