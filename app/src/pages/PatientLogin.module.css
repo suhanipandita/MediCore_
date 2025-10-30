@@ -5,84 +5,84 @@
     font-family: "Plus Jakarta Sans", sans-serif;
     background-color: #f4f7f6;
     /* Light gray background */
-    min-width: 900px;
+    width: 100%;
     /* From reference */
     overflow: hidden;
 }
 
-/* --- Left Section (Green) --- */
-/* Keep styles for .left, .leftLogoText, .leftImage, etc. EXACTLY as they were */
-.left {
-    width: 45%;
-    background: #2D706E;
-    padding: 40px;
-    color: white;
+/* Left section styling (green background) */
+.leftSection {
+    flex: 0 0 45%;
+    background-color: var(--primary-teal-dark);
+    color: var(--white);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
+    justify-content: center;
+    padding: 2rem 3rem;
     box-sizing: border-box;
-}
-
-.leftLogoText {
-    color: white;
-    font-size: 24px;
-    font-weight: 600;
-    width: 100%;
     text-align: left;
-    margin: 0;
 }
 
-.leftImage {
-    width: 90%;
-    margin: 20px 0;
-    max-width: 400px;
+/* Logo/Title styling */
+.leftTitle {
+    font-size: 1.75rem;
+    /* ~28px */
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Image styling */
+.image {
+    width: 100%;
+    max-width: 500px;
     height: auto;
+    margin: 0 0;
+    align-self: center;
 }
 
-.leftTextArea {
-    width: 100%;
-    text-align: left;
-}
-
-.leftHeading {
-    color: white;
-    font-size: 36px;
+/* Subtitle styling */
+.leftSubtitle {
+    font-size: 1.25rem;
+    /* ~20px */
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-bottom: 0.75rem;
 }
 
-.leftDescription {
-    color: #cfe8e4;
-    max-width: 320px;
-    margin: 0 0 15px 0;
+/* Paragraph text styling */
+.leftText {
+    font-size: 0.9375rem;
+    /* ~15px */
+    color: rgba(255, 255, 255, 0.8);
+    /* Slightly transparent white */
     line-height: 1.6;
-    font-size: 15px;
+    max-width: 400px;
+    /* Limit text width */
+    margin-bottom: 2rem;
+    /* Space below text */
 }
 
-.leftCarouselDots {
+/* Carousel dots styling */
+.carouselDots {
     display: flex;
-    gap: 10px;
-    width: 100%;
-    justify-content: flex-start;
-    margin-top: auto;
+    gap: 8px;
+    margin-top: 20px;
+    margin-left: 15px;
+    align-items: center;
 }
 
-.leftDot {
+.dot {
     width: 8px;
     height: 8px;
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.4);
-    transition: all 0.3s ease;
 }
 
-.leftDot.active {
-    background-color: white;
+.activeDot {
     width: 24px;
-    border-radius: 4px;
+    height: 8px;
+    border-radius: 10px;
+    background-color: white;
 }
-
 /* --- Right Section (White) - UPDATED STYLES --- */
 .right {
     width: 55%;

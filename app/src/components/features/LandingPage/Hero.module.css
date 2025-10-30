@@ -1,36 +1,32 @@
 .heroContainer {
-  max-width: 1280px;
+  width: auto;
+  min-width: 1320px;
+  height:auto;
+  min-height: 670px;
   color: #2A7B72;
-  min-height: 540px;
-  /* Match header container width */
-  margin: 0 auto;
+  margin: 0 0;
   background-color: var(--primary-teal-dark);
   border-radius: 24px;
-  padding: 64px 80px;
-  /* Inner padding */
+  padding: 4rem 5vw; 
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  /* Flexible columns */
   gap: 48px;
   align-items: center;
   overflow: hidden;
-  /* Prevent image overflow if needed */
   position: relative;
-  /* For image positioning */
 }
 
 .heroContent {
   color: var(--white);
   z-index: 1;
   /* Keep content above potential image overlaps */
+
 }
 
 .heroTitle {
   font-size: 56px;
-  /* Adjust font size */
   font-weight: 700;
   line-height: 64px;
-  /* Adjust line height */
   margin: 0 16px 16px 0;
   min-width: 560px;
   font: #FFFFFF;
@@ -140,7 +136,7 @@
 .heroImageContainer {
   /* Position image slightly outside the container */
   position: absolute;
-  right: 100px;
+  right: 200px;
   /* Adjust as needed */
   bottom: 0;
   max-width: 380px;
@@ -151,7 +147,7 @@
 
 .heroImage {
   display: block;
-  width: 110%;
+  width: 130%;
   height: auto;
 }
 

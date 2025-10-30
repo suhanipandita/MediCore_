@@ -17,19 +17,14 @@
 /* Left section styling (green background) */
 .leftSection {
     flex: 0 0 45%;
-    /* Fixed width 45% */
     background-color: var(--primary-teal-dark);
-    /* Use variable #1f7a6d */
     color: var(--white);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* Center content vertically */
     padding: 2rem 3rem;
-    /* Padding inside the section */
     box-sizing: border-box;
     text-align: left;
-    /* Align text to the left */
 }
 
 /* Logo/Title styling */
@@ -43,14 +38,10 @@
 /* Image styling */
 .image {
     width: 100%;
-    /* Make image responsive */
     max-width: 500px;
-    /* Limit max width */
     height: auto;
     margin: 0 0;
-    /* Space above/below image */
     align-self: center;
-    /* Center image if container is wider */
 }
 
 /* Subtitle styling */
@@ -80,7 +71,6 @@
     gap: 8px;
     margin-top: 20px;
     margin-left: 15px;
-    /* Adjust positioning */
     align-items: center;
 }
 
@@ -93,12 +83,9 @@
 
 .activeDot {
     width: 24px;
-    /* Make it longer */
     height: 8px;
     border-radius: 10px;
-    /* Rounded rectangle */
     background-color: white;
-    /* Active dot color */
 }
 
 /* Right section styling (white background) */

@@ -8,7 +8,6 @@ import doctor from '../../../assets/icons/doctor.svg';
 
 const Hero: React.FC = () => {
   return (
-    <div className={styles.heroWrapper}>
       <div className={styles.heroContainer}>
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>
@@ -39,7 +38,6 @@ const Hero: React.FC = () => {
           <img src={DoctorHeroImage} alt="Smiling doctor holding a clipboard" className={styles.heroImage} />
         </div>
       </div>
-    </div>
   );
 };
 

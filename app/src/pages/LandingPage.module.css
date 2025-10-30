@@ -1,7 +1,7 @@
 .landingPageContainer {
   padding: 2rem; /* Example: ~32px padding on all sides */
   width: 100%;
-  max-width: 1344px; /* Slightly larger than Hero's 1280px to accommodate padding */
+  max-width: auto; /* Slightly larger than Hero's 1280px to accommodate padding */
   margin: 0 auto; /* Center the container */
   flex-grow: 1; /* Allow this container to grow */
   display: flex; /* Center content vertically if needed, or just stack */

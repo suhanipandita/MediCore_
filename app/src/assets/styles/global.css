@@ -16,7 +16,7 @@
 }
 
 html {
-  height: 100%; /* Ensure html takes full height */
+  height: auto;
 }
 /* Reset and base styles */
 body {

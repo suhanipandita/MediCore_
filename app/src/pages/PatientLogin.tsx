@@ -66,9 +66,9 @@ function PatientLogin() {
         }
     };
 
-     /**
-     * Handles initiating OAuth login.
-     */
+    /**
+    * Handles initiating OAuth login.
+    */
     const handleSocialLogin = async (provider: 'google' | 'apple' | 'microsoft' | 'facebook') => {
         setGeneralError(""); // Clear general errors before attempting social login
         setSocialLoading(provider); // Indicate which provider is loading
@@ -76,8 +76,8 @@ function PatientLogin() {
             // Use 'azure' for Microsoft provider in Supabase OAuth
             const supabaseProvider = provider === 'microsoft' ? 'azure' : provider;
             const { error: socialError } = await supabase.auth.signInWithOAuth({
-                 provider: supabaseProvider
-                 // options: { redirectTo: window.location.origin + '/dashboard' } // Optional redirect target
+                provider: supabaseProvider
+                // options: { redirectTo: window.location.origin + '/dashboard' } // Optional redirect target
             });
             if (socialError) throw socialError;
             // Supabase handles the redirect flow. Loading state persists until redirect.
@@ -100,17 +100,22 @@ function PatientLogin() {
     return (
         <div className={styles.container}>
             {/* LEFT SIDE */}
-            <div className={styles.left}>
-                <h2 className={styles.leftLogoText}>Medicore</h2>
-                <img src={graphicImage} alt="Healthcare illustration" className={styles.leftImage} />
-                <div className={styles.leftTextArea}>
-                    <h3 className={styles.leftHeading}>Smarter Care Starts Here</h3>
-                    <p className={styles.leftDescription}>MediCore unites patients and professionals — simplifying care, records, and billing.</p>
-                </div>
-                <div className={styles.leftCarouselDots}>
-                    <span className={`${styles.leftDot} ${styles.active}`}></span>
-                    <span className={styles.leftDot}></span>
-                    <span className={styles.leftDot}></span>
+            <div className={styles.leftSection}>
+                <h1 className={styles.leftTitle}>Medicore</h1>
+                <img
+                    src={graphicImage} // Use the imported image
+                    alt="Healthcare illustration"
+                    className={styles.image}
+                />
+                <h2 className={styles.leftSubtitle}>Smarter Care Starts Here</h2>
+                <p className={styles.leftText}>
+                    MediCore unites patients and professionals — simplifying care, records, and billing.
+                </p>
+                {/* Carousel dots (optional visual element) */}
+                <div className={styles.carouselDots}>
+                    <div className={`${styles.dot} ${styles.activeDot}`}></div>
+                    <div className={styles.dot}></div>
+                    <div className={styles.dot}></div>
                 </div>
             </div>
 
@@ -125,7 +130,7 @@ function PatientLogin() {
                     <form className={styles.form} onSubmit={handleLogin} noValidate>
                         {/* Email Input */}
                         <div className={styles.inputGroup}>
-                             <label htmlFor="login-email" className={styles.label}></label>
+                            <label htmlFor="login-email" className={styles.label}></label>
                             <input
                                 id="login-email" type="email" placeholder="Email" value={email}
                                 className={`${styles.input} ${emailError || generalError ? styles.inputError : ''}`}
@@ -133,11 +138,11 @@ function PatientLogin() {
                                 required aria-label="Email" aria-invalid={!!emailError || !!generalError}
                                 disabled={!!socialLoading} // Disable if social login is in progress
                             />
-                            {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
+                            {emailError && (<div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div>)}
                         </div>
                         {/* Password Input */}
                         <div className={styles.inputGroup}>
-                             <label htmlFor="login-password" className={styles.label}></label>
+                            <label htmlFor="login-password" className={styles.label}></label>
                             <input
                                 id="login-password" type="password" placeholder="Password" value={password}
                                 className={`${styles.input} ${passwordError || generalError ? styles.inputError : ''}`}
@@ -145,7 +150,7 @@ function PatientLogin() {
                                 required aria-label="Password" aria-invalid={!!passwordError || !!generalError}
                                 disabled={!!socialLoading} // Disable if social login is in progress
                             />
-                            {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
+                            {passwordError && (<div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div>)}
                         </div>
                         {/* Login Button */}
                         <button className={styles.button} type="submit" disabled={loading || !!socialLoading}>
@@ -153,34 +158,34 @@ function PatientLogin() {
                         </button>
                     </form>
 
-                     {/* --- DIVIDER AND SOCIAL LOGINS --- */}
+                    {/* --- DIVIDER AND SOCIAL LOGINS --- */}
                     <div className={styles.separator}> {/* Matches reference style */}
-                       <div className={styles.line}></div> <br></br>
-                       <span style={{ padding: '10px 10px', color: '#2D706E', fontSize: '15px', fontWeight: '500' }}>Log in with</span>
-                       <div className={styles.line}></div> <br></br>
+                        <div className={styles.line}></div> <br></br>
+                        <span style={{ padding: '10px 10px', color: '#2D706E', fontSize: '15px', fontWeight: '500' }}>Log in with</span>
+                        <div className={styles.line}></div> <br></br>
                     </div>
 
                     {/* Matches reference style */}
                     <div className={styles.socialLoginContainer}>
-                         <button onClick={() => handleSocialLogin('google')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Google">
-                             <img src={googleIcon} alt="Google" />
-                         </button>
-                         <button onClick={() => handleSocialLogin('facebook')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Facebook">
-                             <img src={facebookIcon} alt="Facebook" />
-                         </button>
-                         <button onClick={() => handleSocialLogin('apple')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Apple">
-                             <img src={appleIcon} alt="Apple" />
-                         </button>
-                         <button onClick={() => handleSocialLogin('microsoft')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Microsoft">
-                             <img src={microsoftIcon} alt="Microsoft" />
-                         </button>
+                        <button onClick={() => handleSocialLogin('google')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Google">
+                            <img src={googleIcon} alt="Google" />
+                        </button>
+                        <button onClick={() => handleSocialLogin('facebook')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Facebook">
+                            <img src={facebookIcon} alt="Facebook" />
+                        </button>
+                        <button onClick={() => handleSocialLogin('apple')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Apple">
+                            <img src={appleIcon} alt="Apple" />
+                        </button>
+                        <button onClick={() => handleSocialLogin('microsoft')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Microsoft">
+                            <img src={microsoftIcon} alt="Microsoft" />
+                        </button>
                     </div>
-                     {/* --- END SOCIAL LOGIN SECTION --- */}
+                    {/* --- END SOCIAL LOGIN SECTION --- */}
 
                     <Link to="/forgot-password" style={{ color: '#2D706E', fontSize: '15px', fontWeight: '500' }} className={styles.link}>Forgot Password?</Link>
 
                     {/* Signup Link */}
-                    <p style={{ fontSize: '15px', fontWeight: '500px' }}className={styles.footerText}>Don’t have an account?{" "}
+                    <p style={{ fontSize: '15px', fontWeight: '500px' }} className={styles.footerText}>Don’t have an account?{" "}
                         <Link to="/signup-patient" style={{ color: '#2D706E', fontSize: '15px', fontWeight: 'bold' }} className={styles.link}>create one now</Link>
                     </p>
                 </div>
