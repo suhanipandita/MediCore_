@@ -12,12 +12,15 @@
   --text-primary: #1B3B38;
   --text-secondary: #4C6764;
   --white: #FFFFFF;
+  --background-dashboard: #FBFBFB;
+  --background-sidebar-light: #F0F8F7;
   --border-light: #E0E0E0;
 }
 
 html {
   height: auto;
 }
+
 /* Reset and base styles */
 body {
   margin: 0;
@@ -31,10 +34,11 @@ body {
 }
 
 #root {
-    width: 100%;
-    flex-grow: 1; /* Allows root to grow and fill space in flex body */
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  flex-grow: 1;
+  /* Allows root to grow and fill space in flex body */
+  display: flex;
+  flex-direction: column;
 }
 
 a {

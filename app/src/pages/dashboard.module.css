@@ -1,0 +1,343 @@
+.dashboardGrid {
+    display: grid;
+    /* Main layout: 2 columns, flexible */
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 24px;
+}
+
+.mainColumn, .sidebarColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- Card Styles --- */
+.card {
+    background-color: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #F0F0F0; /* Lighter border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); /* Subtle shadow */
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 8px;
+}
+
+.cardHeader h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex-grow: 1; /* Pushes other items to the right */
+}
+
+.headerSubtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-right: auto; /* Pushes itself left, next to the title */
+    padding-left: 8px;
+}
+
+.cardHeader a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-teal-dark);
+    white-space: nowrap;
+}
+
+.headerActions {
+    display: flex;
+    gap: 16px;
+    margin-left: auto; /* Pushes to the right */
+}
+
+.downloadLink {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary) !important;
+}
+
+
+/* --- Appointments Card --- */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    text-align: left;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.table td {
+    padding: 16px 4px; /* More vertical padding */
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid #F0F0F0;
+    vertical-align: middle;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.tableCellFlex {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #e0e0e0; /* Placeholder */
+    border: 2px solid var(--white);
+    box-shadow: 0 0 0 2px var(--primary-teal-dark);
+}
+
+.statusPill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.statusPill.upcoming {
+    background-color: #E3F9F7;
+    color: #2D706E;
+}
+
+.moreButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 4px;
+}
+
+/* --- Health Stats --- */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.statBox {
+    background-color: var(--background-dashboard, #FBFBFB);
+    border: 1px solid #F0F0F0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center; /* Center icon and text */
+    gap: 12px;
+    color: var(--text-secondary);
+}
+
+.statIcon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background-color: #E3F9F7;
+    color: var(--primary-teal-dark);
+}
+
+.statBox div {
+    display: flex;
+    flex-direction: column;
+}
+
+.statLabel {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.statValue {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* --- Bottom Row Layout --- */
+.bottomRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* --- Recent Records / Billing History --- */
+.recordList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recordList li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background-color: var(--background-dashboard, #FBFBFB);
+    border: 1px solid #F0F0F0;
+}
+
+.recordIcon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background-color: #E3F9F7;
+    color: var(--primary-teal-dark);
+}
+
+.recordList li span {
+    flex-grow: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.recordButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.recordButton:hover {
+    background-color: #E0E0E0;
+}
+
+/* --- Reminders List --- */
+.reminderList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.reminderList li {
+    display: flex;
+    gap: 16px; /* More space */
+    align-items: flex-start;
+}
+
+.reminderIcon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #E3F9F7;
+    color: var(--primary-teal-dark);
+    display: grid;
+    place-items: center;
+}
+
+.reminderContent {
+    flex-grow: 1;
+    border-bottom: 1px solid #F0F0F0;
+    padding-bottom: 16px;
+}
+.reminderList li:last-child .reminderContent {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.reminderContent p {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+.reminderContent span {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* --- Book Appointments --- */
+.docList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.docList li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.docAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0; /* Placeholder */
+}
+
+.docInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.docList h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+.docList span {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.bookButton {
+    background-color: #F0F8F7;
+    color: var(--primary-teal-dark);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.bookIconButton {
+    width: 34px;
+    height: 34px;
+    padding: 8px;
+}

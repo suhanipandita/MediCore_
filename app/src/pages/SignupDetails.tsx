@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import styles from './SignupDetails.module.css'; // We will update this
+import styles from './SignupDetails.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic';
 
 // --- Reusable Components ---
@@ -18,7 +18,6 @@ const ErrorIcon = () => (
     </svg>
 );
 
-// UPDATED ProgressBar to handle 'isComplete'
 const ProgressBar = ({ currentStep, isComplete = false }: { currentStep: number, isComplete?: boolean }) => (
     <div className={styles.progressContainer}>
         <div className={`${styles.progressStep} ${currentStep >= 1 ? styles.active : ''}`}></div>
@@ -27,7 +26,6 @@ const ProgressBar = ({ currentStep, isComplete = false }: { currentStep: number,
     </div>
 );
 
-// --- NEW Email Icon Component ---
 const EmailIcon = () => (
     <svg className={styles.emailIcon} width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="64" height="64" rx="32" fill="#E3F9F7"/>
@@ -73,7 +71,7 @@ function SignupDetails() {
         return isValid;
     };
 
-    // --- Resend Email Handler (NEW) ---
+    // --- Resend Email Handler ---
     const handleResendEmail = async () => {
         if (!email) {
             setGeneralError("No email found to resend verification.");
@@ -88,7 +86,6 @@ function SignupDetails() {
                 email: email
             });
             if (error) throw error;
-            // Update success message to show feedback
             setSuccessMessage(`A new verification email has been sent to ${email}.`);
         } catch (error: any) {
             setGeneralError(error.message || "Failed to resend email.");
@@ -125,12 +122,7 @@ function SignupDetails() {
             if (data.user && data.user.identities?.length === 0) {
                  setGeneralError("This email is already in use. Please log in.");
             } else if (data.user) {
-                // This message will trigger the new UI
-                setSuccessMessage(`An email with verification link has been sent to ${email}. Open it to verify your email.`);
-                // Clear form
-                setFullName("");
-                setDob("");
-                setGender("");
+                setSuccessMessage("Signup successful! Please check your email to verify your account.");
             }
             
         } catch (error: any) {
@@ -151,19 +143,27 @@ function SignupDetails() {
         if (generalError) setGeneralError("");
     };
 
-    // --- NEW Success Screen Renderer ---
+    // --- *** NEW *** Button Click Handler ---
+    const handleOpenEmail = () => {
+        // 1. Open email provider in a new tab
+        const emailDomain = email.split('@')[1] || 'mail.google.com';
+        const url = `https://${emailDomain}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+        
+        // 2. Navigate current app to the login page
+        navigate('/login-patient');
+    };
+
+    // --- Success Screen Renderer (UPDATED) ---
     const renderSuccess = () => (
         <div className={styles.successContainer}>
-            {/* The "Back" button now clears the success message, returning to the form */}
             <button 
                 onClick={() => {
-                    setSuccessMessage("");
-                    // Go back to step 2 (password)
                     navigate('/signup-password', { state: { email: email } });
                 }} 
                 className={styles.backLink}
             >
-                <BackIcon /> Go Back
+                <BackIcon />
             </button>
             <ProgressBar currentStep={3} isComplete={true} />
 
@@ -176,10 +176,15 @@ function SignupDetails() {
                 An email with verification link has been sent to <span className={styles.successEmail}>{email}</span>. Open it to verify your email.
             </p>
 
-            {/* This is a smart link to the user's email provider */}
-            <a href={`https://${email.split('@')[1] || 'mail.google.com'}`} target="_blank" rel="noopener noreferrer" className={styles.button}>
+            {/* --- THIS IS THE CHANGE --- */}
+            {/* Changed from <a> tag to <button> with new onClick handler */}
+            <button 
+                type="button"
+                className={styles.button}
+                onClick={handleOpenEmail}
+            >
                 Open Email
-            </a>
+            </button>
             
             {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
 
@@ -192,7 +197,7 @@ function SignupDetails() {
         </div>
     );
 
-    // --- Form Renderer ---
+    // --- Form Renderer (No changes) ---
     const renderForm = () => (
         <div className={styles.formContainer}>
             <button onClick={() => navigate('/signup-password', { state: { email: email } })} className={styles.backLink}>
@@ -281,12 +286,11 @@ function SignupDetails() {
         </div>
     );
 
-    // --- Main Render (UPDATED) ---
+    // --- Main Render ---
     return (
         <div className={styles.container}>
             <AuthGraphic />
             <div className={styles.right}>
-                {/* Conditionally render success screen or form */}
                 {successMessage ? renderSuccess() : renderForm()}
             </div>
         </div>
