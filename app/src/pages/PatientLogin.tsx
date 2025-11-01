@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Use Link for navigation
 import { supabase } from '../services/supabaseClient'; // Adjust path if needed
 import styles from './PatientLogin.module.css'; // Import CSS Module
-
+import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic';
 // Import assets (UPDATE PATHS AS NEEDED)
-import graphicImage from "../assets/images/role-selection-graphic.png"; // Stethoscope graphic
 import googleIcon from '../assets/icons/google-logo.svg';     // Google icon
 import facebookIcon from '../assets/icons/facebook-logo.svg'; // Facebook icon
 import appleIcon from '../assets/icons/apple-logo.svg';       // Apple icon
@@ -100,24 +99,7 @@ function PatientLogin() {
     return (
         <div className={styles.container}>
             {/* LEFT SIDE */}
-            <div className={styles.leftSection}>
-                <h1 className={styles.leftTitle}>Medicore</h1>
-                <img
-                    src={graphicImage} // Use the imported image
-                    alt="Healthcare illustration"
-                    className={styles.image}
-                />
-                <h2 className={styles.leftSubtitle}>Smarter Care Starts Here</h2>
-                <p className={styles.leftText}>
-                    MediCore unites patients and professionals — simplifying care, records, and billing.
-                </p>
-                {/* Carousel dots (optional visual element) */}
-                <div className={styles.carouselDots}>
-                    <div className={`${styles.dot} ${styles.activeDot}`}></div>
-                    <div className={styles.dot}></div>
-                    <div className={styles.dot}></div>
-                </div>
-            </div>
+            <AuthGraphic/>
 
             {/* RIGHT SIDE - Login View */}
             <div className={styles.right}>

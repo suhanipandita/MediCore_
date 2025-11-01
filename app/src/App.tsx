@@ -17,6 +17,8 @@ import AdminLogin from './pages/AdminLogin';
 import SignupPatient from './pages/SignupPatient';     // <-- Import placeholder
 import ForgotPassword from './pages/ForgotPassword'; // <-- Import placeholder
 import Dashboard from './pages/Dashboard';
+import SignupPassword from './pages/SignupPassword';
+import SignupDetails from './pages/SignupDetails';
 
 // Placeholder component
 const Placeholder = ({ title }: { title: string }) => (
@@ -51,21 +53,21 @@ function App() {
 
         if (currentSession?.user?.id && userChanged) {
           await fetchProfile(currentSession.user.id);
-          if(window.location.pathname !== '/dashboard') navigate('/dashboard', { replace: true });
+          if (window.location.pathname !== '/dashboard') navigate('/dashboard', { replace: true });
         } else if (!currentSession && userChanged) {
           dispatch(setProfile(null));
           if (window.location.pathname.startsWith('/dashboard')) navigate('/select-role', { replace: true });
         } else if (!currentSession) {
-             dispatch(setLoading(false));
+          dispatch(setLoading(false));
         }
       }
     );
-     return () => { authListener.subscription.unsubscribe(); };
+    return () => { authListener.subscription.unsubscribe(); };
   }, [dispatch, navigate, session]);
 
   // --- fetchProfile (keep existing logic) ---
   const fetchProfile = async (userId: string) => {
-     if (!userId) { dispatch(setLoading(false)); return; }
+    if (!userId) { dispatch(setLoading(false)); return; }
     dispatch(setLoading(true));
     try {
       const { data, error, status } = await supabase.from('users').select('id, role').eq('id', userId).single();
@@ -81,7 +83,7 @@ function App() {
 
   // --- Render Logic ---
   if (isLoading) {
-      return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
   }
 
   return (
@@ -98,9 +100,10 @@ function App() {
       <Route path="/login-patient" element={!session ? <PatientLogin /> : <Navigate to="/dashboard" replace />} />
       <Route path="/login-staff" element={!session ? <StaffLogin /> : <Navigate to="/dashboard" replace />} />
       <Route path="/login-admin" element={!session ? <AdminLogin /> : <Navigate to="/dashboard" replace />} />
-       {/* *** Patient Signup Route *** */}
+      {/* *** Patient Signup Route *** */}
       <Route path="/signup-patient" element={!session ? <SignupPatient /> : <Navigate to="/dashboard" replace />} />
-      {/* *** Forgot Password Route *** */}
+      <Route path="/signup-password" element={!session ? <SignupPassword /> : <Navigate to="/dashboard" replace />} />
+      <Route path="/signup-details" element={!session ? <SignupDetails /> : <Navigate to="/dashboard" replace />} />      
       <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to="/login-patient" replace />} />
 
 

@@ -1,0 +1,80 @@
+/* --- Left Section (Green) --- */
+.leftSection {
+    flex: 0 0 45%;
+    background-color: var(--primary-teal-dark);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem 3rem;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+/* Logo/Title styling */
+.leftTitle {
+    font-size: 1.75rem;
+    /* ~28px */
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Image styling */
+.image {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    margin: 0 0;
+    align-self: center;
+}
+
+/* Subtitle styling */
+.leftSubtitle {
+    font-size: 1.25rem;
+    /* ~20px */
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+/* Paragraph text styling */
+.leftText {
+    font-size: 0.9375rem;
+    /* ~15px */
+    color: rgba(255, 255, 255, 0.8);
+    /* Slightly transparent white */
+    line-height: 1.6;
+    max-width: 400px;
+    /* Limit text width */
+    margin-bottom: 2rem;
+    /* Space below text */
+}
+
+/* Carousel dots styling */
+.carouselDots {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    margin-left: 15px;
+    align-items: center;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+}
+
+.activeDot {
+    width: 24px;
+    height: 8px;
+    border-radius: 10px;
+    background-color: white;
+}
+
+/* Hide on mobile, same as before */
+@media (max-width: 900px) {
+    .left {
+        display: none;
+    }
+}
