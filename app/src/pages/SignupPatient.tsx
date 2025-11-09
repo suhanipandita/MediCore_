@@ -1,51 +1,28 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import styles from './SignupPatient.module.css'; // Use the new CSS module
-import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; // The reusable component
+import styles from './SignupPatient.module.css';
+import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic';
 
-// Import icons
 import googleIcon from '../assets/icons/google-logo.svg';
 import facebookIcon from '../assets/icons/facebook-logo.svg';
 import appleIcon from '../assets/icons/apple-logo.svg';
 import microsoftIcon from '../assets/icons/microsoft-logo.svg';
 
-// Reusable Error Icon
 const ErrorIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#D94C4C" />
     </svg>
 );
 
-// Reusable Back Icon
-const BackIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" fill="#6c757d" />
-    </svg>
-);
-
-
 function SignupPatient() {
     const navigate = useNavigate();
 
-    // --- State Management ---
-    const [step, setStep] = useState(1); // 1: Email, 2: Details
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [dob, setDob] = useState(""); // Date of Birth
-    const [gender, setGender] = useState("");
 
-    // Error & Loading States
     const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const [fullNameError, setFullNameError] = useState("");
-    const [dobError, setDobError] = useState("");
-    const [genderError, setGenderError] = useState("");
     const [generalError, setGeneralError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
 
-    const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
     // --- Validation ---
@@ -54,20 +31,6 @@ function SignupPatient() {
         if (!email.trim()) { setEmailError("Email address is required."); return false; }
         if (!emailRegex.test(email.trim())) { setEmailError("Invalid email format."); return false; }
         setEmailError(""); return true;
-    };
-
-    const validatePassword = (): boolean => {
-        if (!password) { setPasswordError("Password is required."); return false; }
-        if (password.length < 6) { setPasswordError("Password must be at least 6 characters."); return false; }
-        setPasswordError(""); return true;
-    };
-
-    const validateDetails = (): boolean => {
-        let isValid = true;
-        if (!fullName.trim()) { setFullNameError("Full name is required."); isValid = false; } else { setFullNameError(""); }
-        if (!dob) { setDobError("Date of birth is required."); isValid = false; } else { setDobError(""); }
-        if (!gender) { setGenderError("Please select a gender."); isValid = false; } else { setGenderError(""); }
-        return isValid && validatePassword(); // Also validate password
     };
 
     // --- Handlers ---
@@ -82,52 +45,6 @@ function SignupPatient() {
         }
     };
 
-    const handleFullSignup = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setGeneralError("");
-        setSuccessMessage("");
-        if (!validateDetails()) return;
-
-        setLoading(true);
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: email.trim(),
-                password: password,
-                options: {
-                    data: {
-                        role: 'patient', // This matches your handle_new_user function
-                        full_name: fullName.trim(),
-                        date_of_birth: dob,
-                        gender: gender
-                    }
-                }
-            });
-
-            if (error) throw error;
-
-            // Handle success
-            if (data.user && data.user.identities?.length === 0) {
-                setGeneralError("This email is already in use. Please log in.");
-            } else if (data.user) {
-                setSuccessMessage("Success! Please check your email to verify your account.");
-                // Clear form but keep email for "resend"
-                setPassword("");
-                setFullName("");
-                setDob("");
-                setGender("");
-            }
-
-        } catch (error: any) {
-            console.error("Signup failed:", error);
-            if (error.message.includes("already registered")) {
-                setGeneralError("This email is already in use. Please log in.");
-            } else {
-                setGeneralError(error.message || "Signup failed. Please try again.");
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleSocialLogin = async (provider: 'google' | 'apple' | 'microsoft' | 'facebook') => {
         setGeneralError("");
@@ -135,12 +52,7 @@ function SignupPatient() {
         try {
             const supabaseProvider = provider === 'microsoft' ? 'azure' : provider;
             const { error } = await supabase.auth.signInWithOAuth({
-                provider: supabaseProvider,
-                options: {
-                    data: {
-                        role: 'patient' // Pass role during social signup
-                    }
-                }
+                provider: supabaseProvider
             });
             if (error) throw error;
         } catch (err: any) {
@@ -178,7 +90,7 @@ function SignupPatient() {
                     />
                     {emailError && (<div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div>)}
                 </div>
-                <button className={styles.button} type="submit" disabled={loading || !!socialLoading}>
+                <button className={styles.button} type="submit" disabled={!!socialLoading}>
                     Continue
                 </button>
             </form>

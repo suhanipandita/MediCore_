@@ -1,25 +1,23 @@
 import React from 'react';
-import styles from './Dashboard.module.css'; // We will create this
-import { 
+import { useAppSelector } from '../store/hooks';
+import DoctorDashboard from './DoctorDashboard';
+import styles from './PatientDashboard.module.css';
+import {
     MoreHorizontal,
     Download,
     FileText,
     Calendar,
-    ArrowRightCircle, // A better fit for the billing icon
-    AlertCircle, // Placeholder
-    Droplet, // Placeholder
-    File, // Placeholder
+    AlertCircle,
+    Droplet,
+    File,
 } from 'react-feather';
 
-// --- Placeholder Components ---
-// These are styled to match your design
 const UserAvatar = ({ src }: { src?: string }) => (
     <div className={styles.avatar} style={src ? { backgroundImage: `url(${src})` } : {}}></div>
 );
 const DocAvatar = ({ src }: { src?: string }) => (
     <div className={styles.docAvatar} style={src ? { backgroundImage: `url(${src})` } : {}}></div>
 );
-// Health Stat Icon
 const StatIcon = ({ icon }: { icon: 'bp' | 'bmi' | 'sugar' }) => (
     <div className={styles.statIcon}>
         {icon === 'bp' && <AlertCircle size={20} />}
@@ -27,29 +25,24 @@ const StatIcon = ({ icon }: { icon: 'bp' | 'bmi' | 'sugar' }) => (
         {icon === 'sugar' && <Droplet size={20} />}
     </div>
 );
-// Reminder Icon
 const ReminderIcon = ({ icon }: { icon: 'calendar' | 'report' }) => (
     <div className={styles.reminderIcon}>
         {icon === 'calendar' && <Calendar size={18} />}
         {icon === 'report' && <FileText size={18} />}
     </div>
 );
-// Record Icon
 const RecordIcon = () => (
     <div className={styles.recordIcon}>
         <File size={20} />
     </div>
 );
 
-// --- Main Dashboard Component ---
-const Dashboard: React.FC = () => {
+const PatientDashboard: React.FC = () => {
     return (
         <div className={styles.dashboardGrid}>
-            
-            {/* --- Main Column --- */}
+
             <div className={styles.mainColumn}>
-                
-                {/* Upcoming Appointments */}
+
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2>Upcoming Appointments</h2>
@@ -94,7 +87,6 @@ const Dashboard: React.FC = () => {
                     </table>
                 </div>
 
-                {/* Health Stats */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2>Health Stats</h2>
@@ -125,9 +117,8 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 <div className={styles.bottomRow}>
-                    {/* Recent Records */}
                     <div className={styles.card}>
                         <div className={styles.cardHeader}>
                             <h2>Recent Records</h2>
@@ -150,7 +141,6 @@ const Dashboard: React.FC = () => {
                         </ul>
                     </div>
 
-                    {/* Billing History */}
                     <div className={styles.card}>
                         <div className={styles.cardHeader}>
                             <h2>Billing History</h2>
@@ -175,10 +165,8 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* --- Right Sidebar Column --- */}
             <div className={styles.sidebarColumn}>
-                
-                {/* Reminders */}
+
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2>Reminders</h2>
@@ -209,7 +197,6 @@ const Dashboard: React.FC = () => {
                     </ul>
                 </div>
 
-                {/* Book Appointments */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2>Book Appointments</h2>
@@ -246,6 +233,24 @@ const Dashboard: React.FC = () => {
 
         </div>
     );
+};
+
+const Dashboard: React.FC = () => {
+    const { profile } = useAppSelector((state) => state.auth);
+
+    if (!profile) {
+        return <div>Loading...</div>;
+    }
+
+    if (profile.role === 'Doctor') {
+        return <DoctorDashboard />;
+    }
+
+    if (profile.role === 'Patient') {
+        return <PatientDashboard />;
+    }
+
+    return <div>Dashboard for {profile.role}</div>;
 };
 
 export default Dashboard;
