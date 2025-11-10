@@ -1,0 +1,347 @@
+/* --- Base Layout & Fonts --- */
+.container {
+    display: flex;
+    height: 100vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    background-color: #f4f7f6;
+    min-width: 900px;
+    overflow: hidden;
+}
+
+/* --- Right Section (White) --- */
+.right {
+    width: 55%;
+    background: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    overflow-y: auto;
+    position: relative;
+}
+
+.formContainer {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- Back Link --- */
+.backLink {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary, #6c757d);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px; /* Space for icon */
+    z-index: 10;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    text-decoration: underline;
+    color: var(--text-primary, #333);
+}
+
+/* --- Titles and Subheadings --- */
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px; /* Tighter spacing */
+    margin-top: 0;
+}
+
+.subheading {
+    font-size: 16px; /* Smaller than login */
+    color: #6c757d;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    font-weight: 400; /* Lighter than login */
+    max-width: 340px; /* Constrain width */
+}
+
+/* --- Form Styling --- */
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.inputGroup {
+    width: 100%;
+    position: relative;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* Label style */
+.label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6c757d;
+    margin-bottom: 8px;
+    padding-left: 10px;
+}
+
+/* Input style */
+.input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid #B2D8D6;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 700;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+}
+
+.input::placeholder {
+    color: #889898;
+    opacity: 1;
+}
+
+.input:focus {
+    border-color: #2D706E;
+    box-shadow: 0 0 0 3px rgba(45, 112, 110, 0.15);
+}
+
+.inputError {
+    border-color: #D94C4C !important;
+}
+
+.inputError:focus {
+    box-shadow: 0 0 0 3px rgba(217, 76, 76, 0.15);
+}
+
+/* --- Button style --- */
+.button {
+    padding: 15px;
+    background: #2D706E;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-top: 10px; /* Space above button */
+}
+
+.button:hover:not(:disabled) {
+    background-color: #25615a;
+}
+
+.button:disabled {
+    background-color: #a6c3c2;
+    cursor: not-allowed;
+}
+
+/* --- Validation Error Styling --- */
+.errorContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    align-self: flex-start;
+    padding-left: 10px;
+}
+
+.errorText {
+    color: #D94C4C;
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Global error/success boxes */
+.errorGlobal, .successGlobal {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.errorGlobal {
+    color: #D94C4C;
+    background-color: #fdecea;
+    border: 1px solid #f9c6c6;
+}
+
+.successGlobal {
+    color: #2A7B72;
+    background-color: #e3f9f7;
+    border: 1px solid #B2D8D6;
+}
+
+
+/* --- Progress Bar --- */
+.progressContainer {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 24px;
+    margin-top: 16px;
+}
+
+.progressStep {
+    flex: 1;
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
+}
+
+.progressStep.active {
+    background-color: #2D706E; /* Active color */
+}
+
+/* --- Gender Radio Button Styles --- */
+.radioGroup {
+    display: flex;
+    gap: 24px;
+    margin-top: 10px;
+    padding-left: 10px;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.radioLabel input[type="radio"] {
+    display: none; /* Hide the default radio button */
+}
+
+.customRadio {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #B2D8D6; /* Unselected border */
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-right: 8px;
+    transition: border-color 0.2s;
+}
+
+.radioLabel:hover .customRadio {
+    border-color: #2D706E;
+}
+
+/* This is the inner dot */
+.customRadio::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: #2D706E; /* Selected color */
+    border-radius: 50%;
+    transform: scale(0); /* Hide by default */
+    transition: transform 0.2s ease-in-out;
+}
+
+.radioLabel input[type="radio"]:checked ~ .customRadio {
+    border-color: #2D706E; /* Selected border */
+}
+
+.radioLabel input[type="radio"]:checked ~ .customRadio::after {
+    transform: scale(1); /* Show inner dot when checked */
+}
+
+
+/* --- Footer Text --- */
+.footerText {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 30px;
+}
+
+.link {
+    color: #2D706E;
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+/* --- Success Screen Styles --- */
+.successContainer {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.emailIcon {
+    margin-top: 48px;
+    margin-bottom: 24px;
+}
+
+.successTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.successSubheading {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 0 0 24px 0;
+    line-height: 1.6;
+    max-width: 340px;
+}
+
+.successEmail {
+    color: #333;
+    font-weight: 500;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        min-width: unset;
+        height: auto;
+        min-height: 100vh;
+    }
+    .right {
+        width: 100%;
+        min-height: 100vh;
+        padding: 30px 20px;
+        position: static;
+    }
+    .formContainer {
+        max-width: 90%;
+    }
+}

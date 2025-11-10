@@ -1,3 +1,176 @@
-import React from 'react';
-const StaffLogin: React.FC = () => <div style={{padding: '2rem'}}>Staff/Admin Login Page Placeholder</div>;
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabaseClient';
+import styles from './StaffLogin.module.css'; // Use the new CSS
+import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; 
+
+// Import assets
+import googleIcon from '../assets/icons/google-logo.svg';
+import facebookIcon from '../assets/icons/facebook-logo.svg';
+import appleIcon from '../assets/icons/apple-logo.svg';
+import microsoftIcon from '../assets/icons/microsoft-logo.svg';
+
+// Import Error Icon Component
+const ErrorIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#D94C4C" />
+    </svg>
+);
+
+function StaffLogin() {
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [generalError, setGeneralError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [socialLoading, setSocialLoading] = useState<string | null>(null);
+
+    // --- Validation ---
+    const validateEmail = (): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const trimmedEmail = email.trim();
+        if (trimmedEmail === "") { setEmailError("Email address is required."); return false; }
+        if (!emailRegex.test(trimmedEmail)) { setEmailError("Invalid email format."); return false; }
+        setEmailError(""); return true;
+    };
+    const validatePassword = (): boolean => {
+        if (password.trim() === "") { setPasswordError("Password is required."); return false; }
+        setPasswordError(""); return true;
+    };
+
+    // --- Event Handlers ---
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setEmailError(""); setPasswordError(""); setGeneralError("");
+        if (!validateEmail() || !validatePassword()) return;
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+            if (error) throw error;
+            navigate('/dashboard', { replace: true });
+        } catch (error: any) {
+            console.error("Login failed:", error);
+            setGeneralError(error.message || "Login failed. Please check your credentials.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSocialLogin = async (provider: 'google' | 'apple' | 'microsoft' | 'facebook') => {
+        setGeneralError("");
+        setSocialLoading(provider);
+        try {
+            const supabaseProvider = provider === 'microsoft' ? 'azure' : provider;
+            // @ts-ignore
+            const { error: socialError } = await supabase.auth.signInWithOAuth({
+                 provider: supabaseProvider
+                 // We don't pass role on login, only on signup
+            });
+            if (socialError) throw socialError;
+        } catch (err: any) {
+            console.error(`${provider} login error:`, err);
+            setGeneralError(`Failed to initiate login with ${provider}.`);
+            setSocialLoading(null);
+        }
+    };
+
+    const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>, errorSetter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        setter(e.target.value);
+        if (errorSetter) errorSetter("");
+        if (generalError) setGeneralError("");
+    };
+
+    return (
+        <div className={styles.container}>
+            {/* Use the reusable component, but change the props */}
+            <AuthGraphic 
+                heading="Manage Your Workflow"
+                description="Access patient records, manage appointments, and streamline your day."
+                activeDotIndex={1} // Set the second dot as active
+            />
+
+            {/* RIGHT SIDE - Staff Login View */}
+            <div className={styles.right}>
+                <div className={styles.formContainer}>
+                    <h2 className={styles.title}>Log in to Staff Portal</h2>
+                    <p className={styles.subheading}>Access your professional dashboard.</p>
+
+                    {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
+
+                    <form className={styles.form} onSubmit={handleLogin} noValidate>
+                        {/* Email Input */}
+                        <div className={styles.inputGroup}>
+                             <label htmlFor="login-email" className={styles.label}></label>
+                            <input
+                                id="login-email" type="email" placeholder="Work Email"
+                                value={email}
+                                className={`${styles.input} ${emailError || generalError ? styles.inputError : ''}`}
+                                onChange={handleInputChange(setEmail, setEmailError)}
+                                required aria-label="Email" aria-invalid={!!emailError || !!generalError}
+                                disabled={!!socialLoading}
+                            />
+                            {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
+                        </div>
+                        {/* Password Input */}
+                        <div className={styles.inputGroup}>
+                             <label htmlFor="login-password" className={styles.label}></label>
+                            <input
+                                id="login-password" type="password" placeholder="Password"
+                                value={password}
+                                className={`${styles.input} ${passwordError || generalError ? styles.inputError : ''}`}
+                                onChange={handleInputChange(setPassword, setPasswordError)}
+                                required aria-label="Password" aria-invalid={!!passwordError || !!generalError}
+                                disabled={!!socialLoading}
+                            />
+                            {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
+                        </div>
+                        
+                        {/* Forgot Password Link */}
+                        <Link to="/forgot-password-staff" className={`${styles.link} ${styles.forgotPasswordLink}`}>
+                            Forgot Password?
+                        </Link>
+
+                        {/* Login Button */}
+                        <button className={styles.button} type="submit" disabled={loading || !!socialLoading}>
+                            {loading ? 'Logging in...' : 'Log in'}
+                        </button>
+                    </form>
+
+                    {/* Divider */}
+                    <div className={styles.separator}>
+                       <div className={styles.line}></div>
+                       <span style={{ padding: '0 10px', color: '#2D706E', fontSize: '15px', fontWeight: '500' }}>Log in with</span>
+                       <div className={styles.line}></div>
+                    </div>
+
+                    {/* Social Logins */}
+                    <div className={styles.socialLoginContainer}>
+                         <button onClick={() => handleSocialLogin('google')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Google">
+                             <img src={googleIcon} alt="Google" />
+                         </button>
+                         <button onClick={() => handleSocialLogin('facebook')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Facebook">
+                             <img src={facebookIcon} alt="Facebook" />
+                         </button>
+                         <button onClick={() => handleSocialLogin('apple')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Apple">
+                             <img src={appleIcon} alt="Apple" />
+                         </button>
+                         <button onClick={() => handleSocialLogin('microsoft')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Microsoft">
+                             <img src={microsoftIcon} alt="Microsoft" />
+                         </button>
+                    </div>
+
+                    {/* Signup Link */}
+                    <p style={{ fontSize: '15px', fontWeight: '500px' }}className={styles.footerText}>Don’t have a staff account?{" "}
+                        <Link to="/signup-staff" className={`${styles.link} ${styles.signupLink}`}>create one now</Link>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default StaffLogin;
