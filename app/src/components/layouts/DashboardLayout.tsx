@@ -11,6 +11,7 @@ import {
     User 
 } from 'react-feather';
 import styles from './DashboardLayout.module.css';
+import logo from '../../assets/icons/logo.svg';
 
 // --- Stethoscope Icon for Logo ---
 const StethoscopeIcon = () => (
@@ -40,7 +41,7 @@ const DashboardLayout: React.FC = () => {
             {/* --- Sidebar --- */}
             <nav className={styles.sidebar}>
                 <div className={styles.sidebarLogo}>
-                    <StethoscopeIcon />
+                    <img src={logo} alt="Medicore Logo"/>
                     <span>Medicore</span>
                 </div>
 
