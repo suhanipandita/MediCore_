@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './SignupPassword.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic';
 
@@ -95,7 +95,7 @@ function SignupPassword() {
 
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
 
     // --- Real-time Validation Logic ---
     const validationState = useMemo((): ValidationState => {

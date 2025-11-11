@@ -22,7 +22,7 @@ function SignupStaff() {
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
     const [generalError, setGeneralError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
     const validateEmail = (): boolean => {
@@ -36,8 +36,8 @@ function SignupStaff() {
         e.preventDefault();
         setGeneralError("");
         if (validateEmail()) {
-            navigate('/signup-staff-password', { 
-                state: { email: email.trim() } 
+            navigate('/signup-staff-password', {
+                state: { email: email.trim() }
             });
         }
     };
@@ -47,16 +47,12 @@ function SignupStaff() {
         setSocialLoading(provider);
         try {
             const supabaseProvider = provider === 'microsoft' ? 'azure' : provider;
-            // @ts-ignore
             const { error } = await supabase.auth.signInWithOAuth({
-                 provider: supabaseProvider,
-                 options: {
-                    // We must ask for role on the *next* step
-                    // Social sign-up for staff might need a different flow (e.g., invite-only)
-                    // For now, we pass 'doctor' as a default assumption
-                    data: { role: 'doctor' } 
-                 }
-            });
+                provider: supabaseProvider,
+                options: {
+                    data: { role: 'doctor' }
+                }
+            } as any);
             if (error) throw error;
         } catch (err: any) {
             console.error(`${provider} login error:`, err);
@@ -73,7 +69,7 @@ function SignupStaff() {
 
     return (
         <div className={styles.container}>
-            <AuthGraphic 
+            <AuthGraphic
                 heading="Manage Your Workflow"
                 description="Access patient records, manage appointments, and streamline your day."
                 activeDotIndex={1}
@@ -84,7 +80,7 @@ function SignupStaff() {
                     <p className={styles.subheading}>Enter your work email to create your staff account.</p>
 
                     {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
-                    
+
                     <form className={styles.form} onSubmit={handleEmailContinue} noValidate>
                         <div className={styles.inputGroup}>
                             <label htmlFor="signup-email" className={styles.label}>Work Email</label>
@@ -95,7 +91,7 @@ function SignupStaff() {
                                 required aria-label="Email"
                                 disabled={!!socialLoading}
                             />
-                            {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
+                            {emailError && (<div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div>)}
                         </div>
                         <button className={styles.button} type="submit" disabled={loading || !!socialLoading}>
                             Continue
@@ -107,11 +103,15 @@ function SignupStaff() {
                         <span>Continue with work account</span>
                         <div className={styles.line}></div>
                     </div>
-                    
+
                     <div className={styles.socialLoginContainer}>
                         <button onClick={() => handleSocialLogin('google')} className={styles.socialButton} disabled={!!socialLoading} aria-label="Sign up with Google">
                             <img src={googleIcon} alt="Google" />
                         </button>
+                        <button onClick={() => handleSocialLogin('facebook')} className={styles.socialButton} disabled={!!socialLoading} aria-label="Sign up with Facebook">
+                            <img src={facebookIcon} alt="Facebook" />
+                        </button>
+
                         <button onClick={() => handleSocialLogin('apple')} className={styles.socialButton} disabled={!!socialLoading} aria-label="Sign up with Apple">
                             <img src={appleIcon} alt="Apple" />
                         </button>
@@ -119,9 +119,9 @@ function SignupStaff() {
                             <img src={microsoftIcon} alt="Microsoft" />
                         </button>
                     </div>
-                    
+
                     <p className={styles.legalText}>
-                        By continuing you agree to Medicore’s <Link to="/terms" className={styles.link}>Terms of Service</Link> and 
+                        By continuing you agree to Medicore’s <Link to="/terms" className={styles.link}>Terms of Service</Link> and
                         <Link to="/privacy" className={styles.link}> Privacy Policy</Link>.
                     </p>
 

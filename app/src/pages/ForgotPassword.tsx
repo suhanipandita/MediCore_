@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import styles from './ForgotPassword.module.css'; // We will update this
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic';
@@ -22,7 +22,6 @@ const EmailIcon = () => (
 // --- Main Component ---
 
 function ForgotPassword() {
-    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
     const [generalError, setGeneralError] = useState("");

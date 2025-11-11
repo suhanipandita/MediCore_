@@ -13,19 +13,6 @@ import {
 import styles from './DashboardLayout.module.css';
 import logo from '../../assets/icons/logo.svg';
 
-// --- Stethoscope Icon for Logo ---
-const StethoscopeIcon = () => (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z"></path>
-        <path d="M8 6V4"></path>
-        <path d="M8 6v4l-2.5 4.5a.5.5 0 0 1-.8-.4V10c0-1.1.9-2 2-2h1"></path>
-        <path d="M16 4v4l2.5 4.5a.5.5 0 0 1 .8-.4V8c0-1.1-.9-2-2-2h-1"></path>
-        <path d="M8 10h8"></path>
-        <path d="M12 14v8"></path>
-        <circle cx="12" cy="20" r="2"></circle>
-    </svg>
-);
-
 // --- Main Layout Component ---
 const DashboardLayout: React.FC = () => {
 

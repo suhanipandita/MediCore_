@@ -5,10 +5,9 @@ import {
     Download,
     FileText,
     Calendar,
-    ArrowRightCircle, // A better fit for the billing icon
-    AlertCircle, // Placeholder
-    Droplet, // Placeholder
-    File, // Placeholder
+    AlertCircle,
+    Droplet,
+    File,
 } from 'react-feather';
 
 // --- Placeholder Components ---

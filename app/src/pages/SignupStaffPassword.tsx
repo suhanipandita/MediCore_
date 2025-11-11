@@ -63,7 +63,7 @@ function SignupStaffPassword() {
     const [isPasswordActive, setIsPasswordActive] = useState(false);
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
 
     const validationState = useMemo((): ValidationState => ({
         hasLetter: /[a-zA-Z]/.test(password),
