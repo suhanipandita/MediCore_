@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Dashboard.module.css'; // We will create this
+import styles from './dashboard.module.css'; // We will create this
 import { 
     MoreHorizontal,
     Download,
