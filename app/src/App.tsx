@@ -113,7 +113,6 @@ function App() {
         <Route path="/signup-password" element={<SignupPassword />} />
         <Route path="/signup-details" element={<SignupDetails />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/password-reset" element={<PasswordReset />} />
 
         {/* Staff Flow */}
         <Route path="/login-staff" element={<StaffLogin />} />
@@ -128,6 +127,7 @@ function App() {
         <Route path="/forgot-password-admin" element={<Placeholder title="Admin Forgot Password" />} />
 
       </Route>
+        <Route path="/password-reset" element={<PasswordReset />} />
 
       {/* --- Group 3: Protected Routes (Logged-in users ONLY) --- */}
       <Route element={session ? <DashboardLayout /> : <Navigate to="/select-role" replace />}>
