@@ -88,38 +88,28 @@ function PasswordReset() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // ** CRITICAL FIX **: If we are already in success state, do NOT re-run auth checks.
         if (pageState === 'success') return;
 
         const hash = window.location.hash;
         
-        // 1. If error in hash, invalid
         if (hash.includes('error_description')) {
             setPageState('invalid');
             return;
         }
 
-        // 2. Immediate check for recovery token
+        // Optimistic check: Show form if recovery token is present
         if (hash.includes('type=recovery') || hash.includes('access_token')) {
             setPageState('form');
         } else {
-            // 3. Fallback: Check session (if token was already consumed by router)
             supabase.auth.getSession().then(({ data }) => {
                 if (data.session) {
                     setPageState('form');
                 } else {
-                    // Only switch to invalid if we are still loading (avoid flickering)
+                    // Only switch to invalid if we are still in loading state
                     setPageState(prev => prev === 'form' ? 'form' : 'invalid');
                 }
             });
         }
-
-        // 4. Safety timer
-        const timer = setTimeout(() => {
-            if (pageState === 'loading') {
-                setPageState('invalid');
-            }
-        }, 4000);
 
         const { data: authListener } = supabase.auth.onAuthStateChange(async (event) => {
             if (event === 'PASSWORD_RECOVERY') {
@@ -129,11 +119,9 @@ function PasswordReset() {
 
         return () => {
             authListener.subscription.unsubscribe();
-            clearTimeout(timer);
         };
     }, [pageState]);
 
-    // --- Real-time Validation Logic ---
     const validationState = useMemo((): ValidationState => {
         return {
             hasLetter: /[a-zA-Z]/.test(password),
@@ -169,13 +157,33 @@ function PasswordReset() {
         if (!validatePasswordStep()) return;
 
         setLoading(true);
+
+        // 1. Force a session check. If the magic link is still processing, this waits.
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+            // Wait 1 second and try once more (sometimes client is just slow)
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const { data: { session: retrySession } } = await supabase.auth.getSession();
+            if (!retrySession) {
+                setGeneralError("Session expired or not ready. Please refresh.");
+                setLoading(false);
+                return;
+            }
+        }
+
         try {
-            const { error } = await supabase.auth.updateUser({
-                password: password 
-            });
-            if (error) throw error;
+            // 2. Race condition safety: Timeout after 10 seconds if Supabase hangs
+            const updatePromise = supabase.auth.updateUser({ password: password });
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Request timed out')), 10000)
+            );
+
+            const result: any = await Promise.race([updatePromise, timeoutPromise]);
             
-            // ** FIX **: Clear the URL hash so refreshing doesn't try to re-use the token
+            if (result.error) throw result.error;
+            
+            // 3. Clear hash to prevent loops
             window.history.replaceState(null, '', window.location.pathname);
             
             setPageState('success');
@@ -229,7 +237,7 @@ function PasswordReset() {
             <SuccessShieldIcon />
             <h2 className={styles.statusTitle}>Password Reset Successful</h2>
             <p className={styles.statusSubheading}>
-                Your password has been successfully reset. click below to log in magically.
+                Your password has been successfully reset. Click below to log in.
             </p>
             <button className={styles.button} onClick={() => navigate('/login-patient')}>
                 Back to Login
