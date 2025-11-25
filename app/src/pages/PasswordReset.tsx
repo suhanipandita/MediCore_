@@ -41,49 +41,33 @@ function PasswordReset() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // 1. Immediate check: Does the URL even look right?
-        // Supabase sends #access_token=...&type=recovery
+        // Immediate Logic: Check the URL hash directly
         const hash = window.location.hash;
-        
-        // If Supabase appended an error description, it's definitely invalid
+
+        // 1. If there's an error from Supabase in the URL, it's invalid.
         if (hash.includes('error_description')) {
             setPageState('invalid');
             return;
         }
 
-        // If there is no access_token in the hash, it's not a valid magic link
-        if (!hash.includes('access_token')) {
-            // We wait a tiny bit just in case the client is slow to hydrate, but usually this is immediate
-            const timer = setTimeout(() => setPageState('invalid'), 2000);
-            return () => clearTimeout(timer);
+        // 2. If the URL has 'type=recovery', we assume it's valid and show the form.
+        // This avoids waiting for the event listener which might have already fired.
+        if (hash.includes('type=recovery') || hash.includes('access_token')) {
+            setPageState('form');
+        } else {
+            // If no token is present, we might need to wait a moment or check session
+            supabase.auth.getSession().then(({ data }) => {
+                if (data.session) {
+                    // If a session exists, the link worked and logged them in
+                    setPageState('form');
+                } else {
+                    // No session, no token in URL -> Invalid
+                    // Only set invalid if we haven't already set it to form
+                    setPageState(prev => prev === 'form' ? 'form' : 'invalid');
+                }
+            });
         }
-
-        // 2. If URL looks good, listen for the Supabase event
-        const { data: authListener } = supabase.auth.onAuthStateChange(async (event) => {
-            if (event === 'PASSWORD_RECOVERY') {
-                setPageState('form');
-            }
-        });
-
-        // 3. Fallback safety timer (if event never fires for some reason)
-        const safetyTimer = setTimeout(() => {
-            if (pageState === 'loading') {
-                // If we still haven't switched to form, double check session
-                supabase.auth.getSession().then(({ data }) => {
-                    if (data.session) {
-                        setPageState('form');
-                    } else {
-                        setPageState('invalid');
-                    }
-                });
-            }
-        }, 4000);
-
-        return () => {
-            authListener.subscription.unsubscribe();
-            clearTimeout(safetyTimer);
-        };
-    }, [pageState]);
+    }, []);
 
     const validatePassword = (): boolean => {
         if (!password) { setPasswordError("Password is required."); return false; }
@@ -117,7 +101,12 @@ function PasswordReset() {
             setPageState('success');
         } catch (error: any) {
             console.error("Password update failed:", error);
-            setGeneralError(error.message || "Failed to update password.");
+            // If the token WAS actually invalid, we catch it here on submit
+            if (error.message.includes("Token has expired") || error.message.includes("Invalid")) {
+                setPageState('invalid');
+            } else {
+                setGeneralError(error.message || "Failed to update password.");
+            }
         } finally {
             setLoading(false);
         }
@@ -177,7 +166,7 @@ function PasswordReset() {
             {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
 
             <form className={styles.form} onSubmit={handlePasswordUpdate} noValidate>
-                {/* New Password - Removed label, used placeholder */}
+                {/* New Password */}
                 <div className={styles.inputGroup}>
                     <div className={styles.passwordWrapper}>
                         <input
@@ -203,7 +192,7 @@ function PasswordReset() {
                     {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                 </div>
 
-                {/* Confirm Password - Removed label, used placeholder */}
+                {/* Confirm Password */}
                 <div className={styles.inputGroup}>
                     <div className={styles.passwordWrapper}>
                         <input
