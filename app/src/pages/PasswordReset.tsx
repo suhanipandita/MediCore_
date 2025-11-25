@@ -14,14 +14,10 @@ const LinkInvalidIcon = () => (
     </svg>
 );
 
-// New Shield Icon matching your screenshot (Solid Green Shield + White Check)
 const SuccessShieldIcon = () => (
     <svg className={styles.statusIcon} width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Light Green Background Circle */}
         <circle cx="40" cy="40" r="40" fill="#E3F9F7" />
-        {/* Solid Dark Green Shield */}
         <path d="M40 22C35.5 22 31.5 20.5 28 18V32C28 42 33 51 40 54C47 51 52 42 52 32V18C48.5 20.5 44.5 22 40 22Z" fill="#2D706E" transform="scale(1.5) translate(-13, -8)"/> 
-        {/* White Checkmark */}
         <path d="M34 38L38 42L46 34" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
@@ -92,24 +88,50 @@ function PasswordReset() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        // ** CRITICAL FIX **: If we are already in success state, do NOT re-run auth checks.
+        if (pageState === 'success') return;
+
         const hash = window.location.hash;
+        
+        // 1. If error in hash, invalid
         if (hash.includes('error_description')) {
             setPageState('invalid');
             return;
         }
 
+        // 2. Immediate check for recovery token
         if (hash.includes('type=recovery') || hash.includes('access_token')) {
             setPageState('form');
         } else {
+            // 3. Fallback: Check session (if token was already consumed by router)
             supabase.auth.getSession().then(({ data }) => {
                 if (data.session) {
                     setPageState('form');
                 } else {
+                    // Only switch to invalid if we are still loading (avoid flickering)
                     setPageState(prev => prev === 'form' ? 'form' : 'invalid');
                 }
             });
         }
-    }, []);
+
+        // 4. Safety timer
+        const timer = setTimeout(() => {
+            if (pageState === 'loading') {
+                setPageState('invalid');
+            }
+        }, 4000);
+
+        const { data: authListener } = supabase.auth.onAuthStateChange(async (event) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                setPageState('form');
+            }
+        });
+
+        return () => {
+            authListener.subscription.unsubscribe();
+            clearTimeout(timer);
+        };
+    }, [pageState]);
 
     // --- Real-time Validation Logic ---
     const validationState = useMemo((): ValidationState => {
@@ -152,6 +174,10 @@ function PasswordReset() {
                 password: password 
             });
             if (error) throw error;
+            
+            // ** FIX **: Clear the URL hash so refreshing doesn't try to re-use the token
+            window.history.replaceState(null, '', window.location.pathname);
+            
             setPageState('success');
         } catch (error: any) {
             console.error("Password update failed:", error);
@@ -198,7 +224,6 @@ function PasswordReset() {
         </div>
     );
     
-    // --- UPDATED SUCCESS STATE ---
     const renderSuccess = () => (
         <div className={styles.successContainer}>
             <SuccessShieldIcon />
