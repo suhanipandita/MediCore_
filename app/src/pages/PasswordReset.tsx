@@ -87,11 +87,8 @@ function PasswordReset() {
     const [generalError, setGeneralError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    // IMPORTANT: Empty dependency array [] ensures this ONLY runs on first load
     useEffect(() => {
-        // If we are already in success state, DO NOT re-run the link checks.
-        // This prevents the component from reverting to 'form' mode if it re-renders.
-        if (pageState === 'success') return;
-
         const hash = window.location.hash;
         
         if (hash.includes('error_description')) {
@@ -99,16 +96,19 @@ function PasswordReset() {
             return;
         }
 
-        // Optimistic check: Show form if recovery token is present
+        // Optimistic check
         if (hash.includes('type=recovery') || hash.includes('access_token')) {
             setPageState('form');
         } else {
-            // Fallback check for session
+            // Session check
             supabase.auth.getSession().then(({ data }) => {
                 if (data.session) {
                     setPageState('form');
                 } else {
-                    setPageState(prev => prev === 'form' ? 'form' : 'invalid');
+                    // Wait a brief moment before declaring invalid to prevent flicker
+                    setTimeout(() => {
+                        setPageState(prev => prev === 'form' ? 'form' : 'invalid');
+                    }, 500);
                 }
             });
         }
@@ -122,7 +122,7 @@ function PasswordReset() {
         return () => {
             authListener.subscription.unsubscribe();
         };
-    }, [pageState]);
+    }, []); // <--- Empty array means: DO NOT re-run when I change pageState to 'success'
 
     const validationState = useMemo((): ValidationState => {
         return {
@@ -160,29 +160,16 @@ function PasswordReset() {
 
         setLoading(true);
 
-        // 1. Ensure session is ready
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-            // Short wait for session to hydrate if this was a fresh magic link load
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const { data: { session: retrySession } } = await supabase.auth.getSession();
-            if (!retrySession) {
-                setGeneralError("Session expired or not ready. Please refresh.");
-                setLoading(false);
-                return;
-            }
-        }
-
         try {
+            // 1. Update the password
             const { error } = await supabase.auth.updateUser({
                 password: password 
             });
             if (error) throw error;
             
-            // Removed window.history.replaceState to avoid triggering router/component remounts
-            
+            // 2. Set Success State
             setPageState('success');
+
         } catch (error: any) {
             console.error("Password update failed:", error);
             if (error.message.includes("Token has expired") || error.message.includes("Invalid")) {
@@ -191,6 +178,7 @@ function PasswordReset() {
                 setGeneralError(error.message || "Failed to update password.");
             }
         } finally {
+            // 3. Always stop loading
             setLoading(false);
         }
     };
