@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Download, Upload, Plus, FileText, Calendar, ChevronLeft } from 'react-feather';
+import { Download, Upload, Plus, FileText, ChevronLeft } from 'react-feather';
 import styles from './dashboard.module.css'; // General styles (card, table)
 import profileStyles from './PatientProfile.module.css'; // Specific profile layout styles
 
