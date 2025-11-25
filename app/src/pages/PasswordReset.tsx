@@ -88,6 +88,8 @@ function PasswordReset() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        // If we are already in success state, DO NOT re-run the link checks.
+        // This prevents the component from reverting to 'form' mode if it re-renders.
         if (pageState === 'success') return;
 
         const hash = window.location.hash;
@@ -101,11 +103,11 @@ function PasswordReset() {
         if (hash.includes('type=recovery') || hash.includes('access_token')) {
             setPageState('form');
         } else {
+            // Fallback check for session
             supabase.auth.getSession().then(({ data }) => {
                 if (data.session) {
                     setPageState('form');
                 } else {
-                    // Only switch to invalid if we are still in loading state
                     setPageState(prev => prev === 'form' ? 'form' : 'invalid');
                 }
             });
@@ -158,11 +160,11 @@ function PasswordReset() {
 
         setLoading(true);
 
-        // 1. Force a session check. If the magic link is still processing, this waits.
+        // 1. Ensure session is ready
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
-            // Wait 1 second and try once more (sometimes client is just slow)
+            // Short wait for session to hydrate if this was a fresh magic link load
             await new Promise(resolve => setTimeout(resolve, 1000));
             const { data: { session: retrySession } } = await supabase.auth.getSession();
             if (!retrySession) {
@@ -173,18 +175,12 @@ function PasswordReset() {
         }
 
         try {
-            // 2. Race condition safety: Timeout after 10 seconds if Supabase hangs
-            const updatePromise = supabase.auth.updateUser({ password: password });
-            const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Request timed out')), 10000)
-            );
-
-            const result: any = await Promise.race([updatePromise, timeoutPromise]);
+            const { error } = await supabase.auth.updateUser({
+                password: password 
+            });
+            if (error) throw error;
             
-            if (result.error) throw result.error;
-            
-            // 3. Clear hash to prevent loops
-            window.history.replaceState(null, '', window.location.pathname);
+            // Removed window.history.replaceState to avoid triggering router/component remounts
             
             setPageState('success');
         } catch (error: any) {
@@ -237,7 +233,7 @@ function PasswordReset() {
             <SuccessShieldIcon />
             <h2 className={styles.statusTitle}>Password Reset Successful</h2>
             <p className={styles.statusSubheading}>
-                Your password has been successfully reset. Click below to log in.
+                Your password has been successfully reset. Click below to log in magically.
             </p>
             <button className={styles.button} onClick={() => navigate('/login-patient')}>
                 Back to Login
