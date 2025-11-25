@@ -42,10 +42,6 @@ const Placeholder = ({ title }: { title: string }) => (
   </div>
 );
 
-// Create a NurseDashboard placeholder if file doesn't exist yet
-const NurseDashboardPlaceholder = () => <Placeholder title="Nurse Dashboard" />;
-
-
 function App() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -144,7 +140,7 @@ function App() {
       <Route element={session ? <DashboardLayout /> : <Navigate to="/select-role" replace />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-        <Route path="/nurse-dashboard" element={<NurseDashboardPlaceholder />} />
+        <Route path="/nurse-dashboard" element={<NurseDashboard />} />
         
         <Route path="/find-doctor" element={<Placeholder title="Find Doctor" />} />
         <Route path="/appointments" element={<Placeholder title="Appointments" />} />
