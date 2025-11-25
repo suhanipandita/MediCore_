@@ -4,15 +4,20 @@
     height: 100vh;
     font-family: "Plus Jakarta Sans", sans-serif;
     background-color: #f4f7f6;
-    min-width: 900px;
+    /* Light gray background */
+    width: 100%;
+    /* From reference */
     overflow: hidden;
 }
 
-/* --- Right Section (White) --- */
+/* Left section styling (green background) */
+
+/* --- Right Section (White) - UPDATED STYLES --- */
 .right {
     width: 55%;
     background: white;
     padding: 40px;
+    /* Maintain padding */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -20,38 +25,70 @@
     text-align: center;
     box-sizing: border-box;
     overflow-y: auto;
+    position: relative;
+    /* For Back link */
 }
 
 .formContainer {
     width: 100%;
     max-width: 380px;
+    /* Consistent max width */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* --- Titles and Subheadings --- */
+/* Back link styling (Keep from previous) */
+.backLink {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #6c757d);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    z-index: 10;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    text-decoration: underline;
+    color: var(--text-primary, #333);
+}
+
+/* Titles and Subheadings (Keep from previous) */
 .title {
     font-size: 28px;
     font-weight: 700;
     color: #333;
+    max-height: 34px;
     margin-bottom: 0px;
-    margin-top: 0;
+    margin-top: 0px;
+    /* Space below back link */
 }
 
 .subheading {
-    font-size: 16px;
+    font-size: 18px;
     color: #6c757d;
     margin-bottom: 30px;
-    line-height: 1.6;
-    font-weight: 600;
-    max-width: 420px;
+    line-height: 24px;
+    font-weight: 700;
 }
 
-/* --- Form Styling --- */
+/* Form Styling */
 .form {
     display: flex;
     flex-direction: column;
+    /* Remove gap, use margin on inputGroup now */
+    /* gap: 20px; */
     width: 100%;
 }
 
@@ -60,29 +97,38 @@
     position: relative;
     text-align: left;
     margin-bottom: 20px;
+    /* Space between input groups */
 }
 
+/* Label style */
 .label {
     display: block;
     font-size: 14px;
+    /* Matches reference */
     font-weight: 500;
-    color: #6c757d;
+    color: var(--text-secondary, #6c757d);
     margin-bottom: 8px;
+    /* Space below label */
     padding-left: 10px;
+    /* Slight indent */
 }
 
+/* UPDATED Input style */
 .input {
     width: 100%;
     padding: 15px 20px;
+    /* Keep padding */
     border: 1px solid #B2D8D6;
+    /* Keep border color */
+    /* Change border-radius to match new design */
     border-radius: 15px;
+    /* Moderate rounding, NOT pill shape */
     font-size: 14px;
     font-weight: 700;
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: inherit;
-    padding-right: 60px; 
 }
 
 .input::placeholder {
@@ -90,7 +136,9 @@
     opacity: 1;
 }
 
+/* Keep placeholder style */
 .input:focus {
+    /* Keep focus style */
     border-color: #2D706E;
     box-shadow: 0 0 0 3px rgba(45, 112, 110, 0.15);
 }
@@ -99,24 +147,54 @@
     border-color: #D94C4C !important;
 }
 
+/* Keep error style */
 .inputError:focus {
     box-shadow: 0 0 0 3px rgba(217, 76, 76, 0.15);
 }
 
-/* --- Button style --- */
+/* UPDATED Forgot Password Link Style & Position */
+.link.forgotPasswordLink {
+    /* Add specific class for positioning */
+    color: #2D706E;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    display: block;
+    /* Make it a block element */
+    text-align: right;
+    /* Align to the right */
+    margin-top: -12px;
+    /* Pull up below the password input */
+    margin-bottom: 25px;
+    /* Space below it before the button */
+}
+
+.link.forgotPasswordLink:hover {
+    text-decoration: underline;
+}
+
+/* UPDATED Login Button style */
 .button {
     padding: 15px;
     background: #2D706E;
     color: white;
     border: none;
+    /* Change border-radius to match new design */
     border-radius: 15px;
+    /* Moderate rounding, NOT pill shape */
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
     transition: background-color 0.3s;
     width: 100%;
-    margin-top: 10px;
+    /* Remove margin-top, rely on form gap or other element margins */
+    /* margin-top: 10px; */
 }
+
 
 .button:hover:not(:disabled) {
     background-color: #25615a;
@@ -127,27 +205,7 @@
     cursor: not-allowed;
 }
 
-/* --- Password "Show" Button --- */
-.passwordWrapper {
-    position: relative;
-    width: 100%;
-}
-
-.showPasswordButton {
-    position: absolute;
-    top: 50%;
-    right: 16px;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #2D706E;
-    font-weight: 700;
-    font-size: 14px;
-    padding: 4px;
-}
-
-/* --- Validation Error Styling --- */
+/* Validation Error Styling (Keep from previous) */
 .errorContainer {
     display: flex;
     align-items: center;
@@ -164,71 +222,49 @@
 }
 
 .errorGlobal {
+    color: #D94C4C;
     font-size: 0.875rem;
     margin-bottom: 1rem;
     padding: 0.75rem 1rem;
+    background-color: #fdecea;
+    border: 1px solid #f9c6c6;
     border-radius: 8px;
     width: 100%;
     box-sizing: border-box;
     text-align: center;
-    color: #D94C4C;
-    background-color: #fdecea;
-    border: 1px solid #f9c6c6;
 }
 
-/* --- NEW STYLES for Success and Invalid States --- */
-
-.successContainer,
-.invalidContainer {
-    width: 100%;
-    max-width: 380px;
+/* UPDATED Divider styling */
+.divider {
     display: flex;
-    flex-direction: column;
+    /* Use flex for alignment */
     align-items: center;
-    text-align: center;
-}
-
-.statusIcon {
-    margin-top: 24px;
-    margin-bottom: 24px;
-}
-
-.statusTitle {
-    font-size: 24px;
-    font-weight: 700;
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 8px;
-}
-
-.statusSubheading {
-    font-size: 14px;
-    color: #6c757d;
-    margin: 0 0 32px 0;
-    line-height: 1.6;
-    max-width: 360px;
-}
-
-/* Secondary "Outline" Button */
-.buttonSecondary {
-    padding: 15px;
-    background: white;
-    color: #2D706E;
-    border: 1px solid #2D706E;
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    /* Vertically center text */
+    margin: 20px 0;
+    /* Consistent margin */
     width: 100%;
-    margin-top: 16px;
+    color: #aaa;
+    /* From reference */
+    font-size: 0.875rem;
+    /* ~14px */
 }
 
-.buttonSecondary:hover:not(:disabled) {
-    background-color: #f0f8f7;
+/* Use ::before and ::after for lines */
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: #e0e0e0;
+    /* From reference */
 }
 
-/* --- Social Logins styling --- */
+.divider span {
+    padding: 0 10px;
+    /* From reference */
+}
+
+/* UPDATED Social Logins styling */
 .socialLoginContainer {
     display: flex;
     justify-content: center;
@@ -276,13 +312,47 @@
     object-fit: contain;
 }
 
+/* Footer text ("Don't have an account?") */
+.footerText {
+    font-size: 13px;
+    /* From reference style */
+    color: #6c757d;
+    /* From reference style */
+    margin-top: 20px;
+    /* Consistent spacing */
+}
+
+/* UPDATED Signup Link style */
+.link.signupLink {
+    /* Add specific class */
+    color: #2D706E;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    display: inline;
+}
+
+.link.signupLink:hover {
+    text-decoration: underline;
+}
+
+
 /* --- Responsive Adjustments --- */
+/* Keep responsive styles same as before */
 @media (max-width: 900px) {
     .container {
         flex-direction: column;
         min-width: unset;
         height: auto;
         min-height: 100vh;
+    }
+
+    .left {
+        display: none;
     }
 
     .right {
@@ -292,7 +362,59 @@
         position: static;
     }
 
+    .backLink {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
+
     .formContainer {
         max-width: 90%;
+    }
+
+    .title {
+        margin-top: 3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .right {
+        padding: 20px 15px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .subheading {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+
+    .input {
+        padding: 12px 18px;
+    }
+
+    .button {
+        padding: 12px;
+    }
+
+    .footerText,
+    .link {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .backLink {
+        top: 15px;
+        left: 15px;
+    }
+
+    /* Ensure forgot password doesn't overlap on very small screens */
+    .link.forgotPasswordLink {
+        margin-top: 5px;
+        margin-bottom: 20px;
+        color : #2D706E;
     }
 }
