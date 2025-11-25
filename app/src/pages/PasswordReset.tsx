@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import styles from './PasswordReset.module.css'; // We will update this
+import styles from './PasswordReset.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic';
 
-// --- Reusable Icons ---
+// --- Icons ---
 
-const ErrorIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#D94C4C" />
+// The specific icon from your screenshot: Light teal background, Dark teal circle, White exclamation
+const LinkInvalidIcon = () => (
+    <svg className={styles.statusIcon} width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Light Background Circle */}
+        <circle cx="40" cy="40" r="40" fill="#E3F9F7"/>
+        {/* Dark Inner Circle */}
+        <circle cx="40" cy="40" r="20" fill="#2D706E"/>
+        {/* Exclamation Mark */}
+        <path d="M38 28H42V44H38V28ZM38 48H42V52H38V48Z" fill="white"/>
     </svg>
 );
 
-// --- NEW ICONS ---
 const ShieldCheckIcon = () => (
     <svg className={styles.statusIcon} width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="64" height="64" rx="32" fill="#E3F9F7"/>
@@ -20,13 +25,13 @@ const ShieldCheckIcon = () => (
     </svg>
 );
 
-const ErrorAlertIcon = () => (
-    <svg className={styles.statusIcon} width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="64" height="64" rx="32" fill="#FDECEA"/>
-        <path d="M32 18C24.268 18 18 24.268 18 32C18 39.732 24.268 46 32 46C39.732 46 46 39.732 46 32C46 24.268 39.732 18 32 18ZM32 21C38.0751 21 43 25.9249 43 32C43 38.0751 38.0751 43 32 43C25.9249 43 21 38.0751 21 32C21 25.9249 25.9249 21 32 21ZM31 27V33H33V27H31ZM31 35V37H33V35H31Z" fill="#D94C4C"/>
+const ErrorIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#D94C4C" />
     </svg>
 );
 
+// --- Main Component ---
 
 function PasswordReset() {
     const navigate = useNavigate();
@@ -41,19 +46,24 @@ function PasswordReset() {
     const [generalError, setGeneralError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // This handles the access token from the URL fragment
     useEffect(() => {
-        // Set a timer. If no event is heard, the link is invalid.
+        // Check hash for error immediately (Supabase adds error_description to hash if link is invalid)
+        const hash = window.location.hash;
+        if (hash.includes('error_description')) {
+            setPageState('invalid');
+            return;
+        }
+
+        // Set a timer. If no AuthStateChange event fires, we assume the link is dead/invalid.
         const timer = setTimeout(() => {
             if (pageState === 'loading') {
                 setPageState('invalid');
             }
-        }, 2500); // 2.5 second timeout
+        }, 3000); // 3 second timeout
 
         const { data: authListener } = supabase.auth.onAuthStateChange(async (event) => {
-            // This event fires when the page loads with a valid token
             if (event === 'PASSWORD_RECOVERY') {
-                clearTimeout(timer); // Valid token found, cancel the timer
+                clearTimeout(timer); 
                 setPageState('form');
             }
         });
@@ -62,7 +72,7 @@ function PasswordReset() {
             authListener.subscription.unsubscribe();
             clearTimeout(timer);
         };
-    }, [pageState]); // Only re-run if pageState changes
+    }, [pageState]);
 
     // --- Validation ---
     const validatePassword = (): boolean => {
@@ -91,19 +101,16 @@ function PasswordReset() {
 
         setLoading(true);
         try {
-            // This function only works if the user arrived from the email link
             const { error } = await supabase.auth.updateUser({
                 password: password 
             });
             if (error) throw error;
-            
-            // On success, change to the success screen
             setPageState('success');
 
         } catch (error: any) {
             console.error("Password update failed:", error);
             if (error.message.includes("Token has expired") || error.message.includes("Invalid")) {
-                setPageState('invalid'); // Token expired, show invalid screen
+                setPageState('invalid');
             } else {
                 setGeneralError(error.message || "Failed to update password.");
             }
@@ -130,19 +137,22 @@ function PasswordReset() {
         </div>
     );
 
+    // --- Updated to match screenshot ---
     const renderInvalid = () => (
         <div className={styles.invalidContainer}>
-            <ErrorAlertIcon />
+            <LinkInvalidIcon />
             <h2 className={styles.statusTitle}>Link Not Valid</h2>
             <p className={styles.statusSubheading}>
                 The password reset link has expired or already been used. Request a new password reset link.
             </p>
+            
             <button
                 className={styles.button}
                 onClick={() => navigate('/forgot-password')}
             >
                 Request new link
             </button>
+            
             <button
                 className={styles.buttonSecondary}
                 onClick={() => navigate('/login-patient')}
@@ -176,7 +186,6 @@ function PasswordReset() {
             {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
 
             <form className={styles.form} onSubmit={handlePasswordUpdate} noValidate>
-                {/* New Password Input */}
                 <div className={styles.inputGroup}>
                     <label htmlFor="new-password" className={styles.label}>New Password</label>
                     <div className={styles.passwordWrapper}>
@@ -202,7 +211,6 @@ function PasswordReset() {
                     {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                 </div>
 
-                {/* Confirm New Password Input */}
                 <div className={styles.inputGroup}>
                     <label htmlFor="confirm-new-password" className={styles.label}>Confirm New Password</label>
                     <div className={styles.passwordWrapper}>
@@ -235,19 +243,13 @@ function PasswordReset() {
         </div>
     );
 
-    // This function decides which screen to show
     const renderContent = () => {
         switch (pageState) {
-            case 'loading':
-                return renderLoading();
-            case 'form':
-                return renderForm();
-            case 'success':
-                return renderSuccess();
-            case 'invalid':
-                return renderInvalid();
-            default:
-                return renderInvalid(); // Fallback to invalid
+            case 'loading': return renderLoading();
+            case 'form': return renderForm();
+            case 'success': return renderSuccess();
+            case 'invalid': return renderInvalid();
+            default: return renderInvalid();
         }
     }
 

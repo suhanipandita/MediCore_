@@ -127,6 +127,7 @@ function App() {
         <Route path="/forgot-password-admin" element={<Placeholder title="Admin Forgot Password" />} />
 
       </Route>
+      
         <Route path="/password-reset" element={<PasswordReset />} />
 
       {/* --- Group 3: Protected Routes (Logged-in users ONLY) --- */}
