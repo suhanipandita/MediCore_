@@ -14,10 +14,15 @@ const LinkInvalidIcon = () => (
     </svg>
 );
 
-const ShieldCheckIcon = () => (
-    <svg className={styles.statusIcon} width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="64" height="64" rx="32" fill="#E3F9F7"/>
-        <path d="M32 18C35.9466 18 39.1866 20.3016 40.597 23.6334L40.6667 23.8219L40.769 24.1614C41.7481 27.2764 42 29.8166 42 32C42 37.1554 39.5269 41.8108 36.1953 45.1098L32.6667 48.601L32 49.2598L31.3333 48.601L27.8047 45.1098C24.4731 41.8108 22 37.1554 22 32C22 29.8166 22.2519 27.2764 23.231 24.1614L23.3333 23.8219L23.403 23.6334C24.8134 20.3016 28.0534 18 32 18ZM32 21C29.421 21 27.2505 22.6186 26.2483 24.965C25.3787 27.7663 25 30.1066 25 32C25 36.136 26.9859 40.0163 29.7431 42.7441L32 45.0252L34.2569 42.7441C37.0141 40.0163 39 36.136 39 32C39 30.1066 38.6213 27.7663 37.7517 24.965C36.7495 22.6186 34.579 21 32 21ZM30.1667 33.5118L28 31.3451L29.4142 29.9309L30.1667 30.6834L34.5858 26.2642L36 27.6801L30.1667 33.5118Z" fill="#2D706E"/>
+// New Shield Icon matching your screenshot (Solid Green Shield + White Check)
+const SuccessShieldIcon = () => (
+    <svg className={styles.statusIcon} width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Light Green Background Circle */}
+        <circle cx="40" cy="40" r="40" fill="#E3F9F7" />
+        {/* Solid Dark Green Shield */}
+        <path d="M40 22C35.5 22 31.5 20.5 28 18V32C28 42 33 51 40 54C47 51 52 42 52 32V18C48.5 20.5 44.5 22 40 22Z" fill="#2D706E" transform="scale(1.5) translate(-13, -8)"/> 
+        {/* White Checkmark */}
+        <path d="M34 38L38 42L46 34" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
 
@@ -137,8 +142,6 @@ function PasswordReset() {
     const handlePasswordUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setGeneralError("");
-        
-        // Just in case the checklist didn't show
         setIsPasswordActive(true);
 
         if (!validatePasswordStep()) return;
@@ -195,15 +198,16 @@ function PasswordReset() {
         </div>
     );
     
+    // --- UPDATED SUCCESS STATE ---
     const renderSuccess = () => (
         <div className={styles.successContainer}>
-            <ShieldCheckIcon />
+            <SuccessShieldIcon />
             <h2 className={styles.statusTitle}>Password Reset Successful</h2>
             <p className={styles.statusSubheading}>
-                Your password has been updated. You can now log in with your new credentials.
+                Your password has been successfully reset. click below to log in magically.
             </p>
             <button className={styles.button} onClick={() => navigate('/login-patient')}>
-                Go to Login
+                Back to Login
             </button>
         </div>
     );
@@ -242,7 +246,7 @@ function PasswordReset() {
                     {passwordError && !isPasswordActive && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                 </div>
 
-                {/* --- CHECKLIST APPEARS HERE --- */}
+                {/* Checklist */}
                 {isPasswordActive && <PasswordChecklist validation={validationState} />}
 
                 {/* Confirm Password */}
