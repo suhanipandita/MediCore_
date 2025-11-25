@@ -14,29 +14,27 @@ import LandingPage from './pages/LandingPage';
 import RoleSelection from './pages/RoleSelection';
 import PatientLogin from './pages/PatientLogin';
 import StaffLogin from './pages/StaffLogin';
-import AdminLogin from './pages/AdminLogin'; // <-- Updated
+import AdminLogin from './pages/AdminLogin';
 import ForgotPassword from './pages/ForgotPassword';
-import Dashboard from './pages/Dashboard';
 import PasswordReset from './pages/PasswordReset';
-import DoctorDashboard from './pages/DoctorDashboard'; // <-- NEW IMPORT
 
-// --- Patient Signup Flow ---
+// --- Dashboards ---
+import Dashboard from './pages/Dashboard'; // Patient
+import DoctorDashboard from './pages/DoctorDashboard'; // Doctor
+import NurseDashboard from './pages/NurseDashboard'; // Nurse (Placeholder)
+
+// --- Patient Signup ---
 import SignupPatient from './pages/SignupPatient';
 import SignupPassword from './pages/SignupPassword';
 import SignupDetails from './pages/SignupDetails';
 
-// --- Staff Signup Flow ---
+// --- Staff Signup ---
 import SignupStaff from './pages/SignupStaff';
 import SignupStaffPassword from './pages/SignupStaffPassword';
 import SignupStaffDetails from './pages/SignupStaffDetails';
 
-// ... other imports
-import Appointments from './pages/Appointments'; // Assuming added in step 2
-import PatientList from './pages/PatientList'; // <-- NEW IMPORT
-// ...
 
-
-// Placeholder component
+// Placeholder components
 const Placeholder = ({ title }: { title: string }) => (
   <div style={{ padding: '2rem', textAlign: 'center', flexGrow: 1 }}>
     <h2>{title} Page</h2>
@@ -44,10 +42,14 @@ const Placeholder = ({ title }: { title: string }) => (
   </div>
 );
 
+// Create a NurseDashboard placeholder if file doesn't exist yet
+const NurseDashboardPlaceholder = () => <Placeholder title="Nurse Dashboard" />;
+
+
 function App() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { session, isLoading, profile} = useAppSelector((state) => state.auth);
+  const { session, isLoading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
@@ -68,7 +70,8 @@ function App() {
           await fetchProfile(currentSession.user.id, false);
         } else if (!currentSession && userChanged) {
           dispatch(setProfile(null));
-          if (window.location.pathname.startsWith('/dashboard')) {
+          // If logging out, go to role selection
+          if (window.location.pathname.includes('dashboard')) {
             navigate('/select-role', { replace: true });
           }
         }
@@ -104,13 +107,15 @@ function App() {
 
   return (
     <Routes>
-      {/* --- Group 1: Public-Facing Routes (Visible to ALL) --- */}
+      {/* --- Group 1: Public-Facing Routes --- */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<LandingPage />} />
       </Route>
 
-      {/* --- Group 2: Auth Routes (Logged-out users ONLY) --- */}
-      <Route element={!session ? <Outlet /> : <Navigate to="/dashboard" replace />}>
+      {/* --- Group 2: Auth Routes --- */}
+      {/* Removed the !session guard here. We let the Login pages handle redirects internally 
+          so they can perform role checks before redirecting. */}
+      <Route element={<Outlet />}>
         <Route path="/select-role" element={<RoleSelection />} />
         
         {/* Patient Flow */}
@@ -127,26 +132,26 @@ function App() {
         <Route path="/signup-staff-details" element={<SignupStaffDetails />} />
         <Route path="/forgot-password-staff" element={<Placeholder title="Staff Forgot Password" />} />
 
-        {/* --- NEW ADMIN FLOW --- */}
+        {/* Admin Flow */}
         <Route path="/login-admin" element={<AdminLogin />} />
         <Route path="/signup-admin" element={<Placeholder title="Admin Signup" />} />
         <Route path="/forgot-password-admin" element={<Placeholder title="Admin Forgot Password" />} />
-
       </Route>
-      
-        <Route path="/password-reset" element={<PasswordReset />} />
 
-      {/* --- Group 3: Protected Routes (Logged-in users ONLY) --- */}
+      <Route path="/password-reset" element={<PasswordReset />} />
+
+      {/* --- Group 3: Protected Routes --- */}
       <Route element={session ? <DashboardLayout /> : <Navigate to="/select-role" replace />}>
-        <Route path="/dashboard" element={profile?.role === 'Patient' ? <Dashboard /> : <DoctorDashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+        <Route path="/nurse-dashboard" element={<NurseDashboardPlaceholder />} />
+        
         <Route path="/find-doctor" element={<Placeholder title="Find Doctor" />} />
-        <Route path="/appointments" element={<Appointments />} />
-        <Route path="/patient-list" element={<PatientList />} />
+        <Route path="/appointments" element={<Placeholder title="Appointments" />} />
         <Route path="/medical-records" element={<Placeholder title="Medical Records" />} />
         <Route path="/billing" element={<Placeholder title="Bills & Payments" />} />
       </Route>
       
-      {/* --- Fallback --- */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

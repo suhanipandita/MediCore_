@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
+import { useAppSelector } from '../store/hooks';
 import styles from './PatientLogin.module.css';
-
-// Import the reusable component
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; 
 
-// Import assets
 import googleIcon from '../assets/icons/google-logo.svg';
 import facebookIcon from '../assets/icons/facebook-logo.svg';
 import appleIcon from '../assets/icons/apple-logo.svg';
 import microsoftIcon from '../assets/icons/microsoft-logo.svg';
 
-
-// Import Error Icon Component
 const ErrorIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#D94C4C" />
@@ -21,9 +17,9 @@ const ErrorIcon = () => (
 );
 
 function PatientLogin() {
-    const navigate = useNavigate(); // <-- Make sure navigate is initialized
+    const navigate = useNavigate();
+    const { session, profile } = useAppSelector((state) => state.auth);
 
-    // State for login form
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -32,8 +28,13 @@ function PatientLogin() {
     const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
+    // --- Redirect if ALREADY logged in correctly ---
+    useEffect(() => {
+        if (session && profile?.role === 'Patient') {
+            navigate('/dashboard', { replace: true });
+        }
+    }, [session, profile, navigate]);
 
-    // --- Validation ---
     const validateEmail = (): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const trimmedEmail = email.trim();
@@ -46,7 +47,6 @@ function PatientLogin() {
         setPasswordError(""); return true;
     };
 
-    // --- UPDATED Event Handler ---
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setEmailError(""); setPasswordError(""); setGeneralError("");
@@ -54,36 +54,46 @@ function PatientLogin() {
 
         setLoading(true);
         try {
-            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-            if (error) throw error;
+            // 1. Sign in
+            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({ 
+                email: email.trim(), 
+                password 
+            });
             
-            // --- THIS IS THE FIX ---
-            // This navigation now happens *only* after a successful login
-            // and App.tsx will no longer fight with it.
+            if (signInError) throw signInError;
+            if (!user) throw new Error("No user found");
+
+            // 2. Security Check using METADATA (Bypasses RLS issues)
+            // User metadata is stored in the auth token, so it's available immediately
+            const role = user.user_metadata?.role?.toLowerCase();
+
+            if (role !== 'patient') {
+                // If not a patient, sign them out immediately
+                await supabase.auth.signOut();
+                throw new Error("Access Denied. This account is not registered as a Patient.");
+            }
+            
+            // 3. Success
             navigate('/dashboard', { replace: true });
 
         } catch (error: any) {
             console.error("Login failed:", error);
-            setGeneralError(error.message || "Login failed. Please check your credentials.");
+            const msg = error.message === "Invalid login credentials" 
+                ? "Invalid email or password." 
+                : error.message;
+            setGeneralError(msg);
         } finally {
             setLoading(false);
         }
     };
 
-     /**
-     * Handles initiating OAuth login.
-     */
     const handleSocialLogin = async (provider: 'google' | 'apple' | 'microsoft' | 'facebook') => {
         setGeneralError("");
         setSocialLoading(provider);
         try {
             const supabaseProvider = provider === 'microsoft' ? 'azure' : provider;
-            // @ts-ignore
             const { error: socialError } = await supabase.auth.signInWithOAuth({
-                 provider: supabaseProvider
-                 // Note: Social login will trigger the onAuthStateChange in App.tsx
-                 // which will fetch the profile. The user will be redirected
-                 // by the router logic in App.tsx on the next render.
+                 provider: supabaseProvider,
             });
             if (socialError) throw socialError;
         } catch (err: any) {
@@ -93,21 +103,15 @@ function PatientLogin() {
         }
     };
 
-
-    // Clear errors on input change
     const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>, errorSetter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
         setter(e.target.value);
         if (errorSetter) errorSetter("");
         if (generalError) setGeneralError("");
     };
 
-    // --- Render ---
     return (
         <div className={styles.container}>
-            {/* LEFT SIDE - Reusable component */}
             <AuthGraphic />
-
-            {/* RIGHT SIDE - Login View */}
             <div className={styles.right}>
                 <div className={styles.formContainer}>
                     <h2 className={styles.title}>Log in to Patient Portal</h2>
@@ -116,7 +120,6 @@ function PatientLogin() {
                     {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
 
                     <form className={styles.form} onSubmit={handleLogin} noValidate>
-                        {/* Email Input */}
                         <div className={styles.inputGroup}>
                              <label htmlFor="login-email" className={styles.label}></label>
                             <input
@@ -128,7 +131,6 @@ function PatientLogin() {
                             />
                             {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
                         </div>
-                        {/* Password Input */}
                         <div className={styles.inputGroup}>
                              <label htmlFor="login-password" className={styles.label}></label>
                             <input
@@ -140,13 +142,11 @@ function PatientLogin() {
                             />
                             {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                         </div>
-                        {/* Login Button */}
                         <button className={styles.button} type="submit" disabled={loading || !!socialLoading}>
                             {loading ? 'Logging in...' : 'Log in'}
                         </button>
                     </form>
 
-                     {/* --- DIVIDER AND SOCIAL LOGINS --- */}
                     <div className={styles.separator}>
                        <div className={styles.line}></div> <br></br>
                        <span style={{ padding: '10px 10px', color: '#2D706E', fontSize: '15px', fontWeight: '500' }}>Log in with</span>
@@ -170,7 +170,6 @@ function PatientLogin() {
 
                     <Link to="/forgot-password" style={{ color: '#2D706E', fontSize: '15px', fontWeight: '500' }} className={styles.link}>Forgot Password?</Link>
 
-                    {/* Signup Link */}
                     <p style={{ fontSize: '15px', fontWeight: '500px' }}className={styles.footerText}>Don’t have an account?{" "}
                         <Link to="/signup-patient" style={{ color: '#2D706E', fontSize: '15px', fontWeight: 'bold' }} className={styles.link}>create one now</Link>
                     </p>

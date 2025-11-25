@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import styles from './AdminLogin.module.css'; // We will create this next
+import { useAppSelector } from '../store/hooks';
+import styles from './AdminLogin.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; 
 
 // Import assets
@@ -10,7 +11,6 @@ import facebookIcon from '../assets/icons/facebook-logo.svg';
 import appleIcon from '../assets/icons/apple-logo.svg';
 import microsoftIcon from '../assets/icons/microsoft-logo.svg';
 
-// Import Error Icon Component
 const ErrorIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#D94C4C" />
@@ -19,6 +19,7 @@ const ErrorIcon = () => (
 
 function AdminLogin() {
     const navigate = useNavigate();
+    const { session, profile } = useAppSelector((state) => state.auth);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -28,7 +29,13 @@ function AdminLogin() {
     const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
-    // --- Validation ---
+    // --- Redirect if ALREADY logged in correctly ---
+    useEffect(() => {
+        if (session && profile?.role === 'Admin') {
+            navigate('/dashboard', { replace: true });
+        }
+    }, [session, profile, navigate]);
+
     const validateEmail = (): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const trimmedEmail = email.trim();
@@ -41,7 +48,6 @@ function AdminLogin() {
         setPasswordError(""); return true;
     };
 
-    // --- Event Handlers ---
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setEmailError(""); setPasswordError(""); setGeneralError("");
@@ -49,12 +55,32 @@ function AdminLogin() {
 
         setLoading(true);
         try {
-            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-            if (error) throw error;
+            // 1. Sign In
+            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({ 
+                email: email.trim(), 
+                password 
+            });
+            
+            if (signInError) throw signInError;
+            if (!user) throw new Error("No user found");
+
+            // 2. Check Role using METADATA
+            const role = user.user_metadata?.role?.toLowerCase();
+
+            if (role !== 'admin') {
+                await supabase.auth.signOut();
+                throw new Error("Access Denied. This portal is for Administrators only.");
+            }
+
+            // 3. Success
             navigate('/dashboard', { replace: true });
+
         } catch (error: any) {
             console.error("Login failed:", error);
-            setGeneralError(error.message || "Login failed. Please check your credentials.");
+            const msg = error.message === "Invalid login credentials" 
+                ? "Invalid email or password." 
+                : error.message;
+            setGeneralError(msg);
         } finally {
             setLoading(false);
         }
@@ -65,10 +91,9 @@ function AdminLogin() {
         setSocialLoading(provider);
         try {
             const supabaseProvider = provider === 'microsoft' ? 'azure' : provider;
-            // @ts-ignore
             const { error: socialError } = await supabase.auth.signInWithOAuth({
                  provider: supabaseProvider
-            });
+            } as any);
             if (socialError) throw socialError;
         } catch (err: any) {
             console.error(`${provider} login error:`, err);
@@ -85,14 +110,12 @@ function AdminLogin() {
 
     return (
         <div className={styles.container}>
-            {/* Use the reusable component, but change the props for Admin */}
             <AuthGraphic 
                 heading="Administrative Control"
                 description="Manage hospital staff, view analytics, and oversee system operations."
-                activeDotIndex={2} // Set the third dot as active
+                activeDotIndex={2}
             />
 
-            {/* RIGHT SIDE - Admin Login View */}
             <div className={styles.right}>
                 <div className={styles.formContainer}>
                     <h2 className={styles.title}>Log in to Admin Portal</h2>
@@ -101,7 +124,6 @@ function AdminLogin() {
                     {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
 
                     <form className={styles.form} onSubmit={handleLogin} noValidate>
-                        {/* Email Input */}
                         <div className={styles.inputGroup}>
                              <label htmlFor="login-email" className={styles.label}></label>
                             <input
@@ -114,7 +136,6 @@ function AdminLogin() {
                             />
                             {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
                         </div>
-                        {/* Password Input */}
                         <div className={styles.inputGroup}>
                              <label htmlFor="login-password" className={styles.label}></label>
                             <input
@@ -128,25 +149,21 @@ function AdminLogin() {
                             {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                         </div>
                         
-                        {/* Forgot Password Link */}
                         <Link to="/forgot-password-admin" className={`${styles.link} ${styles.forgotPasswordLink}`}>
                             Forgot Password?
                         </Link>
 
-                        {/* Login Button */}
                         <button className={styles.button} type="submit" disabled={loading || !!socialLoading}>
                             {loading ? 'Logging in...' : 'Log in'}
                         </button>
                     </form>
 
-                    {/* Divider */}
                     <div className={styles.separator}>
                        <div className={styles.line}></div>
                        <span style={{ padding: '0 10px', color: '#2D706E', fontSize: '15px', fontWeight: '500' }}>Log in with</span>
                        <div className={styles.line}></div>
                     </div>
 
-                    {/* Social Logins */}
                     <div className={styles.socialLoginContainer}>
                          <button onClick={() => handleSocialLogin('google')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Google">
                              <img src={googleIcon} alt="Google" />
@@ -162,7 +179,6 @@ function AdminLogin() {
                          </button>
                     </div>
 
-                    {/* Signup Link */}
                     <p style={{ fontSize: '15px', fontWeight: '500px' }}className={styles.footerText}>Need an admin account?{" "}
                         <Link to="/signup-admin" className={`${styles.link} ${styles.signupLink}`}>create one now</Link>
                     </p>

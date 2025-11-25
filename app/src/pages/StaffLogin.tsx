@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import styles from './StaffLogin.module.css'; // Use the new CSS
+import { useAppSelector } from '../store/hooks';
+import styles from './StaffLogin.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; 
 
 // Import assets
@@ -19,6 +20,7 @@ const ErrorIcon = () => (
 
 function StaffLogin() {
     const navigate = useNavigate();
+    const { session, profile } = useAppSelector((state) => state.auth);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -28,7 +30,18 @@ function StaffLogin() {
     const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
-    // --- Validation ---
+    // --- Redirect if ALREADY logged in with correct role ---
+    useEffect(() => {
+        if (session && profile) {
+            const role = profile.role?.toLowerCase();
+            if (role === 'doctor') {
+                navigate('/doctor-dashboard', { replace: true });
+            } else if (role === 'nurse') {
+                navigate('/nurse-dashboard', { replace: true });
+            }
+        }
+    }, [session, profile, navigate]);
+
     const validateEmail = (): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const trimmedEmail = email.trim();
@@ -49,12 +62,34 @@ function StaffLogin() {
 
         setLoading(true);
         try {
-            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-            if (error) throw error;
-            navigate('/dashboard', { replace: true });
+            // 1. Sign in
+            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({ 
+                email: email.trim(), 
+                password 
+            });
+            
+            if (signInError) throw signInError;
+            if (!user) throw new Error("No user found");
+
+            // 2. Check Role using METADATA (Bypasses RLS issues)
+            const role = user.user_metadata?.role?.toLowerCase();
+
+            if (role === 'doctor') {
+                navigate('/doctor-dashboard', { replace: true });
+            } else if (role === 'nurse') {
+                navigate('/nurse-dashboard', { replace: true });
+            } else {
+                // Not staff? Logout.
+                await supabase.auth.signOut();
+                throw new Error("Access Denied. This portal is for Medical Staff only.");
+            }
+
         } catch (error: any) {
             console.error("Login failed:", error);
-            setGeneralError(error.message || "Login failed. Please check your credentials.");
+            const msg = error.message === "Invalid login credentials" 
+                ? "Invalid email or password." 
+                : error.message;
+            setGeneralError(msg);
         } finally {
             setLoading(false);
         }
@@ -65,11 +100,9 @@ function StaffLogin() {
         setSocialLoading(provider);
         try {
             const supabaseProvider = provider === 'microsoft' ? 'azure' : provider;
-            // @ts-ignore
             const { error: socialError } = await supabase.auth.signInWithOAuth({
                  provider: supabaseProvider
-                 // We don't pass role on login, only on signup
-            });
+            } as any);
             if (socialError) throw socialError;
         } catch (err: any) {
             console.error(`${provider} login error:`, err);
@@ -86,14 +119,12 @@ function StaffLogin() {
 
     return (
         <div className={styles.container}>
-            {/* Use the reusable component, but change the props */}
             <AuthGraphic 
                 heading="Manage Your Workflow"
                 description="Access patient records, manage appointments, and streamline your day."
-                activeDotIndex={1} // Set the second dot as active
+                activeDotIndex={1}
             />
 
-            {/* RIGHT SIDE - Staff Login View */}
             <div className={styles.right}>
                 <div className={styles.formContainer}>
                     <h2 className={styles.title}>Log in to Staff Portal</h2>
@@ -102,7 +133,6 @@ function StaffLogin() {
                     {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
 
                     <form className={styles.form} onSubmit={handleLogin} noValidate>
-                        {/* Email Input */}
                         <div className={styles.inputGroup}>
                              <label htmlFor="login-email" className={styles.label}></label>
                             <input
@@ -115,7 +145,6 @@ function StaffLogin() {
                             />
                             {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
                         </div>
-                        {/* Password Input */}
                         <div className={styles.inputGroup}>
                              <label htmlFor="login-password" className={styles.label}></label>
                             <input
@@ -129,25 +158,21 @@ function StaffLogin() {
                             {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                         </div>
                         
-                        {/* Forgot Password Link */}
                         <Link to="/forgot-password-staff" className={`${styles.link} ${styles.forgotPasswordLink}`}>
                             Forgot Password?
                         </Link>
 
-                        {/* Login Button */}
                         <button className={styles.button} type="submit" disabled={loading || !!socialLoading}>
                             {loading ? 'Logging in...' : 'Log in'}
                         </button>
                     </form>
 
-                    {/* Divider */}
                     <div className={styles.separator}>
                        <div className={styles.line}></div>
                        <span style={{ padding: '0 10px', color: '#2D706E', fontSize: '15px', fontWeight: '500' }}>Log in with</span>
                        <div className={styles.line}></div>
                     </div>
 
-                    {/* Social Logins */}
                     <div className={styles.socialLoginContainer}>
                          <button onClick={() => handleSocialLogin('google')} className={styles.socialButton} disabled={loading || !!socialLoading} aria-label="Login with Google">
                              <img src={googleIcon} alt="Google" />
@@ -163,7 +188,6 @@ function StaffLogin() {
                          </button>
                     </div>
 
-                    {/* Signup Link */}
                     <p style={{ fontSize: '15px', fontWeight: '500px' }}className={styles.footerText}>Don’t have a staff account?{" "}
                         <Link to="/signup-staff" className={`${styles.link} ${styles.signupLink}`}>create one now</Link>
                     </p>
