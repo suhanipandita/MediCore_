@@ -1,0 +1,199 @@
+/* --- Appointments Grid Layout (Replicates Image) --- */
+.appointmentsGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); /* 2:1 ratio for main content and requests */
+    gap: 24px;
+    height: 100%;
+}
+
+.appointmentsMainColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- Top Statistics (Total/Pending/Completed) --- */
+.statsHeaderCard {
+    /* Special card for grouping the header and stats */
+    padding-bottom: 24px;
+}
+
+.statsHeaderCard .cardHeader {
+     /* Ensures the title and link are aligned horizontally before the grid */
+    flex-wrap: nowrap;
+    align-items: flex-end;
+}
+
+.statsHeaderCard .cardHeader h2 {
+    /* Reset flex-grow so the title stays left of the link */
+    flex-grow: 0;
+}
+
+
+.statsContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.statCard {
+    background-color: var(--background-dashboard, #FBFBFB); /* Match background in the image */
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #F0F0F0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.statIcon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background-color: #E3F9F7;
+    color: var(--primary-teal-dark);
+}
+
+.statLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.statValue {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* --- Appointment List Table --- */
+.appointmentsTableCard {
+    /* Reusing base card styles */
+}
+
+/* Status Pill Variations (replicate dashboard.module.css or define here) */
+.statusPill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.upcoming {
+    background-color: #E3F9F7;
+    color: #2D706E;
+}
+
+.completed {
+    background-color: #e6f6ed; /* Light green */
+    color: #4CAF50; /* Green */
+}
+
+.cancelled {
+    background-color: #fdecea; /* Light red */
+    color: #D94C4C; /* Red */
+}
+
+
+/* --- Appointment Request Card (Right Sidebar) --- */
+
+.requestCard {
+    /* Reusing base card style */
+}
+
+.requestGroupHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px 0 8px 0;
+}
+
+.requestDate {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.requestCount {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin: 0;
+}
+
+.requestItem {
+    display: grid;
+    grid-template-columns: auto 1fr auto; /* Avatar | Info | Actions */
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F0F0F0;
+}
+.requestItem:last-of-type {
+    border-bottom: none;
+}
+
+.requestInfo {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.requestName {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.requestTime, .requestSession {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.requestActions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.requestButton {
+    background: none;
+    border: 1px solid #E0E0E0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.requestButton.accepted {
+    background-color: #E3F9F7;
+    color: var(--primary-teal-dark);
+    border-color: #E3F9F7;
+}
+
+.requestButton.rejected {
+    background-color: #FDECEA;
+    color: #D94C4C;
+    border-color: #FDECEA;
+}
+
+.requestButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

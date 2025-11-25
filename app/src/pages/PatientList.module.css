@@ -1,0 +1,66 @@
+/* Reusing general card/table styles from dashboard.module.css */
+
+.patientListContainer {
+    width: 100%;
+}
+
+.fullWidthCard {
+    /* Ensures the card uses the full space of the layout */
+    padding: 24px;
+}
+
+.filterControls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto; /* Pushes controls to the right */
+    flex-wrap: wrap; 
+}
+
+.selectInput {
+    padding: 10px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    background-color: var(--background-dashboard);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.exportButton {
+    background-color: #F0F8F7;
+    color: var(--primary-teal-dark);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.exportButton:hover {
+    background-color: #E3F9F7;
+}
+
+/* Status Pill styling - specific for Patient List */
+
+.active {
+    background-color: #E3F9F7;
+    color: #2D706E; /* Teal */
+}
+
+.discharged {
+    background-color: #f0f0f0;
+    color: #6c757d; /* Gray/Secondary */
+}
+
+.pending {
+    background-color: #fff3cd; /* Yellow */
+    color: #856404; 
+}

@@ -1,0 +1,263 @@
+/* --- Base Layout --- */
+.pageContainer {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.backButtonContainer {
+    margin-bottom: 8px;
+}
+
+.backButton {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+    padding: 0;
+}
+.backButton:hover {
+    color: var(--primary-teal-dark);
+}
+
+.pageTitle {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* --- Main Grid Layout --- */
+.mainGrid {
+    display: grid;
+    /* Two columns: Profile+Appointments (2) | Prescription+Reports (1) */
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); 
+    gap: 24px;
+    height: 100%;
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- Profile Card (Left Top) --- */
+.profileCard {
+    /* Uses existing .card styles */
+}
+.profileCard h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 20px 0;
+}
+
+.profileContent {
+    display: flex;
+    gap: 32px;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.profileDetails {
+    display: grid;
+    /* Name/Value pairs split evenly in two columns */
+    grid-template-columns: 1fr 1fr; 
+    gap: 8px 16px;
+    width: 100%;
+}
+
+.detailRow {
+    display: contents; /* Allows child elements to span columns/rows in the grid */
+    font-size: 14px;
+}
+
+.detailRow span {
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-align: right;
+    padding-right: 8px;
+}
+
+.detailRow strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.activeStatus {
+    color: #4CAF50 !important; /* Green for Active */
+}
+
+
+/* --- Appointments Card (Left Bottom) --- */
+.appointmentsCard {
+    /* Uses existing .card styles */
+    flex-grow: 1;
+}
+
+.smallTable th, .smallTable td {
+    font-size: 13px;
+}
+
+.narrowCol {
+    width: 120px;
+}
+
+.highlightRow td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+/* Highlight color for the completed row matching image f34c97.png */
+.highlightRow:nth-child(2) td { 
+    background-color: var(--background-sidebar-light); 
+    border-radius: 4px;
+}
+
+.statusDot {
+    font-weight: 600;
+    font-size: 13px;
+    display: block;
+}
+
+.completed {
+    color: #4CAF50; /* Green */
+}
+.upcoming {
+    color: #FFA500; /* Orange/Yellow for upcoming/examining */
+}
+
+
+/* --- Prescription Card (Right Top) --- */
+.prescriptionCard {
+    /* Uses existing .card styles */
+}
+.prescriptionCard h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 20px 0;
+}
+
+.prescriptionInput {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.prescriptionButton {
+    background-color: var(--primary-teal-dark);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.prescriptionButton:hover {
+    background-color: #1e5a55;
+}
+
+
+/* --- Report Card (Right Bottom) --- */
+.reportCard {
+    /* Uses existing .card styles */
+    flex-grow: 1;
+}
+
+.reportCard h2 {
+    flex-grow: 1;
+}
+
+.reportIcon {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    display: grid;
+    place-items: center;
+}
+
+.addReportButton {
+    background: none;
+    border: 1px solid var(--primary-teal-dark);
+    color: var(--primary-teal-dark);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background-color 0.2s;
+}
+.addReportButton:hover {
+    background-color: #E3F9F7;
+}
+
+.reportActionButton {
+    background-color: #E3F9F7;
+    color: var(--primary-teal-dark);
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.reportActionButton:hover {
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .mainGrid {
+        grid-template-columns: 1fr;
+    }
+    .profileDetails {
+        grid-template-columns: 1fr;
+    }
+    .detailRow span {
+        text-align: left;
+    }
+}

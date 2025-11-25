@@ -18,6 +18,7 @@ import AdminLogin from './pages/AdminLogin'; // <-- Updated
 import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import PasswordReset from './pages/PasswordReset';
+import DoctorDashboard from './pages/DoctorDashboard'; // <-- NEW IMPORT
 
 // --- Patient Signup Flow ---
 import SignupPatient from './pages/SignupPatient';
@@ -28,6 +29,11 @@ import SignupDetails from './pages/SignupDetails';
 import SignupStaff from './pages/SignupStaff';
 import SignupStaffPassword from './pages/SignupStaffPassword';
 import SignupStaffDetails from './pages/SignupStaffDetails';
+
+// ... other imports
+import Appointments from './pages/Appointments'; // Assuming added in step 2
+import PatientList from './pages/PatientList'; // <-- NEW IMPORT
+// ...
 
 
 // Placeholder component
@@ -132,9 +138,10 @@ function App() {
 
       {/* --- Group 3: Protected Routes (Logged-in users ONLY) --- */}
       <Route element={session ? <DashboardLayout /> : <Navigate to="/select-role" replace />}>
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={profile?.role === 'Patient' ? <Dashboard /> : <DoctorDashboard />} />
         <Route path="/find-doctor" element={<Placeholder title="Find Doctor" />} />
-        <Route path="/appointments" element={<Placeholder title="Appointments" />} />
+        <Route path="/appointments" element={<Appointments />} />
+        <Route path="/patient-list" element={<PatientList />} /> 
         <Route path="/medical-records" element={<Placeholder title="Medical Records" />} />
         <Route path="/billing" element={<Placeholder title="Bills & Payments" />} />
       </Route>
