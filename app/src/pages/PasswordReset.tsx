@@ -6,14 +6,10 @@ import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic';
 
 // --- Icons ---
 
-// The specific icon from your screenshot: Light teal background, Dark teal circle, White exclamation
 const LinkInvalidIcon = () => (
     <svg className={styles.statusIcon} width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Light Background Circle */}
         <circle cx="40" cy="40" r="40" fill="#E3F9F7"/>
-        {/* Dark Inner Circle */}
         <circle cx="40" cy="40" r="20" fill="#2D706E"/>
-        {/* Exclamation Mark */}
         <path d="M38 28H42V44H38V28ZM38 48H42V52H38V48Z" fill="white"/>
     </svg>
 );
@@ -31,8 +27,6 @@ const ErrorIcon = () => (
     </svg>
 );
 
-// --- Main Component ---
-
 function PasswordReset() {
     const navigate = useNavigate();
     const [pageState, setPageState] = useState<'loading' | 'form' | 'success' | 'invalid'>('loading');
@@ -47,34 +41,50 @@ function PasswordReset() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Check hash for error immediately (Supabase adds error_description to hash if link is invalid)
+        // 1. Immediate check: Does the URL even look right?
+        // Supabase sends #access_token=...&type=recovery
         const hash = window.location.hash;
+        
+        // If Supabase appended an error description, it's definitely invalid
         if (hash.includes('error_description')) {
             setPageState('invalid');
             return;
         }
 
-        // Set a timer. If no AuthStateChange event fires, we assume the link is dead/invalid.
-        const timer = setTimeout(() => {
-            if (pageState === 'loading') {
-                setPageState('invalid');
-            }
-        }, 3000); // 3 second timeout
+        // If there is no access_token in the hash, it's not a valid magic link
+        if (!hash.includes('access_token')) {
+            // We wait a tiny bit just in case the client is slow to hydrate, but usually this is immediate
+            const timer = setTimeout(() => setPageState('invalid'), 2000);
+            return () => clearTimeout(timer);
+        }
 
+        // 2. If URL looks good, listen for the Supabase event
         const { data: authListener } = supabase.auth.onAuthStateChange(async (event) => {
             if (event === 'PASSWORD_RECOVERY') {
-                clearTimeout(timer); 
                 setPageState('form');
             }
         });
 
+        // 3. Fallback safety timer (if event never fires for some reason)
+        const safetyTimer = setTimeout(() => {
+            if (pageState === 'loading') {
+                // If we still haven't switched to form, double check session
+                supabase.auth.getSession().then(({ data }) => {
+                    if (data.session) {
+                        setPageState('form');
+                    } else {
+                        setPageState('invalid');
+                    }
+                });
+            }
+        }, 4000);
+
         return () => {
             authListener.subscription.unsubscribe();
-            clearTimeout(timer);
+            clearTimeout(safetyTimer);
         };
     }, [pageState]);
 
-    // --- Validation ---
     const validatePassword = (): boolean => {
         if (!password) { setPasswordError("Password is required."); return false; }
         if (password.length < 6) { setPasswordError("Password must be at least 6 characters."); return false; }
@@ -93,7 +103,6 @@ function PasswordReset() {
         return isPasswordValid && isConfirmValid;
     };
 
-    // --- Event Handler ---
     const handlePasswordUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setGeneralError("");
@@ -106,14 +115,9 @@ function PasswordReset() {
             });
             if (error) throw error;
             setPageState('success');
-
         } catch (error: any) {
             console.error("Password update failed:", error);
-            if (error.message.includes("Token has expired") || error.message.includes("Invalid")) {
-                setPageState('invalid');
-            } else {
-                setGeneralError(error.message || "Failed to update password.");
-            }
+            setGeneralError(error.message || "Failed to update password.");
         } finally {
             setLoading(false);
         }
@@ -133,11 +137,9 @@ function PasswordReset() {
     const renderLoading = () => (
         <div className={styles.formContainer}>
             <h2 className={styles.title}>Verifying Link...</h2>
-            <p className={styles.subheading}>Please wait while we check your password reset link.</p>
         </div>
     );
 
-    // --- Updated to match screenshot ---
     const renderInvalid = () => (
         <div className={styles.invalidContainer}>
             <LinkInvalidIcon />
@@ -145,18 +147,10 @@ function PasswordReset() {
             <p className={styles.statusSubheading}>
                 The password reset link has expired or already been used. Request a new password reset link.
             </p>
-            
-            <button
-                className={styles.button}
-                onClick={() => navigate('/forgot-password')}
-            >
+            <button className={styles.button} onClick={() => navigate('/forgot-password')}>
                 Request new link
             </button>
-            
-            <button
-                className={styles.buttonSecondary}
-                onClick={() => navigate('/login-patient')}
-            >
+            <button className={styles.buttonSecondary} onClick={() => navigate('/login-patient')}>
                 Back to Log in
             </button>
         </div>
@@ -169,10 +163,7 @@ function PasswordReset() {
             <p className={styles.statusSubheading}>
                 Your password has been updated. You can now log in with your new credentials.
             </p>
-            <button
-                className={styles.button}
-                onClick={() => navigate('/login-patient')}
-            >
+            <button className={styles.button} onClick={() => navigate('/login-patient')}>
                 Go to Login
             </button>
         </div>
@@ -186,8 +177,8 @@ function PasswordReset() {
             {generalError && <p className={styles.errorGlobal}>{generalError}</p>}
 
             <form className={styles.form} onSubmit={handlePasswordUpdate} noValidate>
+                {/* New Password - Removed label, used placeholder */}
                 <div className={styles.inputGroup}>
-                    <label htmlFor="new-password" className={styles.label}>New Password</label>
                     <div className={styles.passwordWrapper}>
                         <input
                             id="new-password"
@@ -198,6 +189,7 @@ function PasswordReset() {
                             onChange={handleInputChange(setPassword, setPasswordError)}
                             required
                             disabled={loading}
+                            aria-label="New Password"
                         />
                         <button
                             type="button"
@@ -211,8 +203,8 @@ function PasswordReset() {
                     {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                 </div>
 
+                {/* Confirm Password - Removed label, used placeholder */}
                 <div className={styles.inputGroup}>
-                    <label htmlFor="confirm-new-password" className={styles.label}>Confirm New Password</label>
                     <div className={styles.passwordWrapper}>
                         <input
                             id="confirm-new-password"
@@ -223,6 +215,7 @@ function PasswordReset() {
                             onChange={handleInputChange(setConfirmPassword, setConfirmPasswordError)}
                             required
                             disabled={loading}
+                            aria-label="Confirm New Password"
                         />
                         <button
                             type="button"
