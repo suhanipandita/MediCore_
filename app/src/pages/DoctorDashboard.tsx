@@ -3,11 +3,8 @@ import styles from './dashboard.module.css';
 import { 
     MoreHorizontal,
     User,
-    Clipboard,
     FileText,
     Calendar,
-    Bell,
-    Download,
 } from 'react-feather';
 
 // --- Mock Data Structures (Doctor View) ---
@@ -53,11 +50,7 @@ const ReminderIcon = ({ icon }: { icon: 'calendar' | 'report' }) => (
         {icon === 'report' && <FileText size={18} />}
     </div>
 );
-const RecordIcon = () => (
-    <div className={styles.recordIcon}>
-        <Clipboard size={20} />
-    </div>
-);
+
 const getStatusPillClass = (status: TodayAppointment['status']) => {
     switch (status) {
         case 'Upcoming': return styles.upcoming;

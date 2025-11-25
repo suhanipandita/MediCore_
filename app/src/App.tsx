@@ -47,7 +47,7 @@ const Placeholder = ({ title }: { title: string }) => (
 function App() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { session, isLoading } = useAppSelector((state) => state.auth);
+  const { session, isLoading, profile} = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
@@ -141,7 +141,7 @@ function App() {
         <Route path="/dashboard" element={profile?.role === 'Patient' ? <Dashboard /> : <DoctorDashboard />} />
         <Route path="/find-doctor" element={<Placeholder title="Find Doctor" />} />
         <Route path="/appointments" element={<Appointments />} />
-        <Route path="/patient-list" element={<PatientList />} /> 
+        <Route path="/patient-list" element={<PatientList />} />
         <Route path="/medical-records" element={<Placeholder title="Medical Records" />} />
         <Route path="/billing" element={<Placeholder title="Bills & Payments" />} />
       </Route>
