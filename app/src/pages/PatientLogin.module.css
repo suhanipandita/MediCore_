@@ -228,6 +228,54 @@
     background-color: #f0f8f7;
 }
 
+/* --- Social Logins styling --- */
+.socialLoginContainer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    /* From reference */
+    width: 100%;
+    margin-bottom: 20px;
+    /* From reference */
+}
+
+/* UPDATED Social button style */
+.socialButton {
+    background-color: #2D706E;
+    /* Light teal background from reference */
+    border: none;
+    border-radius: 50%;
+    /* Circle shape from reference */
+    width: 40px;
+    /* From reference */
+    height: 40px;
+    /* From reference */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.socialButton:hover:not(:disabled) {
+    background-color: #d0e0df;
+    /* Slightly darker */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.socialButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.socialButton img {
+    width: 20px;
+    /* From reference */
+    height: 20px;
+    /* Adjust if needed */
+    object-fit: contain;
+}
+
 /* --- Responsive Adjustments --- */
 @media (max-width: 900px) {
     .container {
