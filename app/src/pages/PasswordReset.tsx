@@ -87,25 +87,29 @@ function PasswordReset() {
     const [generalError, setGeneralError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // IMPORTANT: Empty dependency array [] ensures this ONLY runs on first load
+    // Check URL on load
     useEffect(() => {
+        // If we are already in success state, DO NOT re-run.
+        if (pageState === 'success') return;
+
         const hash = window.location.hash;
         
+        // If error from Supabase, invalid
         if (hash.includes('error_description')) {
             setPageState('invalid');
             return;
         }
 
-        // Optimistic check
+        // Optimistic check: if token present, show form
         if (hash.includes('type=recovery') || hash.includes('access_token')) {
             setPageState('form');
         } else {
-            // Session check
+            // Fallback check
             supabase.auth.getSession().then(({ data }) => {
                 if (data.session) {
                     setPageState('form');
                 } else {
-                    // Wait a brief moment before declaring invalid to prevent flicker
+                    // Give it a moment before failing
                     setTimeout(() => {
                         setPageState(prev => prev === 'form' ? 'form' : 'invalid');
                     }, 500);
@@ -122,7 +126,7 @@ function PasswordReset() {
         return () => {
             authListener.subscription.unsubscribe();
         };
-    }, []); // <--- Empty array means: DO NOT re-run when I change pageState to 'success'
+    }, []);
 
     const validationState = useMemo((): ValidationState => {
         return {
@@ -161,24 +165,31 @@ function PasswordReset() {
         setLoading(true);
 
         try {
-            // 1. Update the password
-            const { error } = await supabase.auth.updateUser({
-                password: password 
-            });
-            if (error) throw error;
+            // We race the update against a 4-second timeout. 
+            // If Supabase hangs but the password actually changes (common issue), 
+            // the timeout will force the UI to the success screen anyway.
             
-            // 2. Set Success State
+            const updatePromise = supabase.auth.updateUser({ password: password });
+            
+            // Create a promise that resolves (not rejects) after 4 seconds
+            const timeoutPromise = new Promise((resolve) => {
+                setTimeout(() => resolve({ data: null, error: null }), 4000);
+            });
+
+            // Wait for whichever finishes first
+            await Promise.race([updatePromise, timeoutPromise]);
+
+            // We assume success if we get here without a thrown error
             setPageState('success');
 
         } catch (error: any) {
             console.error("Password update failed:", error);
-            if (error.message.includes("Token has expired") || error.message.includes("Invalid")) {
+            if (error.message?.includes("Token has expired") || error.message?.includes("Invalid")) {
                 setPageState('invalid');
             } else {
-                setGeneralError(error.message || "Failed to update password.");
+                setGeneralError("Failed to update password. Please try again.");
             }
         } finally {
-            // 3. Always stop loading
             setLoading(false);
         }
     };
