@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import styles from './PasswordReset.module.css';
@@ -27,6 +27,51 @@ const ErrorIcon = () => (
     </svg>
 );
 
+const CheckIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 0C3.58187 0 0 3.58187 0 8C0 12.4181 3.58187 16 8 16C12.4181 16 16 12.4181 16 8C16 3.58187 12.4181 0 8 0ZM7.0625 12.1812L3.64375 8.7625L5.05625 7.35L7.0625 9.35625L10.9437 5.475L12.3562 6.8875L7.0625 12.1812Z" fill="#2D706E" />
+    </svg>
+);
+
+const RadioIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 1C4.13438 1 1 4.13438 1 8C1 11.8656 4.13438 15 8 15C11.8656 15 15 11.8656 15 8C15 4.13438 11.8656 1 8 1ZM8 0C12.4181 0 16 3.58187 16 8C16 12.4181 12.4181 16 8 16C3.58187 16 0 12.4181 0 8C0 3.58187 3.58187 0 8 0Z" fill="#E0E0E0" />
+    </svg>
+);
+
+interface ValidationState {
+    hasLetter: boolean;
+    hasNumber: boolean;
+    hasSpecialChar: boolean;
+    has8Chars: boolean;
+}
+
+const PasswordChecklist = ({ validation }: { validation: ValidationState }) => {
+    return (
+        <div className={styles.passwordChecklist}>
+            <p>Your password must contain atleast</p>
+            <ul>
+                <li className={validation.hasLetter ? styles.valid : ''}>
+                    {validation.hasLetter ? <CheckIcon /> : <RadioIcon />}
+                    <span>1 letter</span>
+                </li>
+                <li className={validation.hasNumber ? styles.valid : ''}>
+                    {validation.hasNumber ? <CheckIcon /> : <RadioIcon />}
+                    <span>1 number</span>
+                </li>
+                <li className={validation.hasSpecialChar ? styles.valid : ''}>
+                    {validation.hasSpecialChar ? <CheckIcon /> : <RadioIcon />}
+                    <span>1 Special character</span>
+                </li>
+                <li className={validation.has8Chars ? styles.valid : ''}>
+                    {validation.has8Chars ? <CheckIcon /> : <RadioIcon />}
+                    <span>8 characters</span>
+                </li>
+            </ul>
+        </div>
+    );
+};
+
 function PasswordReset() {
     const navigate = useNavigate();
     const [pageState, setPageState] = useState<'loading' | 'form' | 'success' | 'invalid'>('loading');
@@ -34,6 +79,7 @@ function PasswordReset() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isPasswordActive, setIsPasswordActive] = useState(false);
 
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
@@ -41,56 +87,61 @@ function PasswordReset() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Immediate Logic: Check the URL hash directly
         const hash = window.location.hash;
-
-        // 1. If there's an error from Supabase in the URL, it's invalid.
         if (hash.includes('error_description')) {
             setPageState('invalid');
             return;
         }
 
-        // 2. If the URL has 'type=recovery', we assume it's valid and show the form.
-        // This avoids waiting for the event listener which might have already fired.
         if (hash.includes('type=recovery') || hash.includes('access_token')) {
             setPageState('form');
         } else {
-            // If no token is present, we might need to wait a moment or check session
             supabase.auth.getSession().then(({ data }) => {
                 if (data.session) {
-                    // If a session exists, the link worked and logged them in
                     setPageState('form');
                 } else {
-                    // No session, no token in URL -> Invalid
-                    // Only set invalid if we haven't already set it to form
                     setPageState(prev => prev === 'form' ? 'form' : 'invalid');
                 }
             });
         }
     }, []);
 
-    const validatePassword = (): boolean => {
-        if (!password) { setPasswordError("Password is required."); return false; }
-        if (password.length < 6) { setPasswordError("Password must be at least 6 characters."); return false; }
-        setPasswordError(""); return true;
-    };
+    // --- Real-time Validation Logic ---
+    const validationState = useMemo((): ValidationState => {
+        return {
+            hasLetter: /[a-zA-Z]/.test(password),
+            hasNumber: /\d/.test(password),
+            hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+            has8Chars: password.length >= 8,
+        };
+    }, [password]);
 
-    const validatePasswordMatch = (): boolean => {
-        const isPasswordValid = validatePassword();
-        let isConfirmValid = true;
+    const validatePasswordStep = (): boolean => {
+        let isValid = true;
+        if (!Object.values(validationState).every(Boolean)) {
+            setPasswordError("Password does not meet all requirements.");
+            isValid = false;
+        } else {
+            setPasswordError("");
+        }
+        
         if (password !== confirmPassword) {
             setConfirmPasswordError("Passwords do not match.");
-            isConfirmValid = false;
+            isValid = false;
         } else {
             setConfirmPasswordError("");
         }
-        return isPasswordValid && isConfirmValid;
+        return isValid;
     };
 
     const handlePasswordUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setGeneralError("");
-        if (!validatePasswordMatch()) return;
+        
+        // Just in case the checklist didn't show
+        setIsPasswordActive(true);
+
+        if (!validatePasswordStep()) return;
 
         setLoading(true);
         try {
@@ -101,7 +152,6 @@ function PasswordReset() {
             setPageState('success');
         } catch (error: any) {
             console.error("Password update failed:", error);
-            // If the token WAS actually invalid, we catch it here on submit
             if (error.message.includes("Token has expired") || error.message.includes("Invalid")) {
                 setPageState('invalid');
             } else {
@@ -116,7 +166,7 @@ function PasswordReset() {
         setter(e.target.value);
         if (errorSetter) errorSetter("");
         if (generalError) setGeneralError("");
-        if (errorSetter === setPasswordError || errorSetter === setConfirmPasswordError) {
+        if (errorSetter === setConfirmPasswordError) {
             setConfirmPasswordError("");
         }
     };
@@ -175,10 +225,10 @@ function PasswordReset() {
                             placeholder="New Password"
                             value={password}
                             className={`${styles.input} ${passwordError ? styles.inputError : ''}`}
+                            onFocus={() => setIsPasswordActive(true)}
                             onChange={handleInputChange(setPassword, setPasswordError)}
                             required
                             disabled={loading}
-                            aria-label="New Password"
                         />
                         <button
                             type="button"
@@ -189,8 +239,11 @@ function PasswordReset() {
                             {showPassword ? 'Hide' : 'Show'}
                         </button>
                     </div>
-                    {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
+                    {passwordError && !isPasswordActive && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}
                 </div>
+
+                {/* --- CHECKLIST APPEARS HERE --- */}
+                {isPasswordActive && <PasswordChecklist validation={validationState} />}
 
                 {/* Confirm Password */}
                 <div className={styles.inputGroup}>
@@ -204,7 +257,6 @@ function PasswordReset() {
                             onChange={handleInputChange(setConfirmPassword, setConfirmPasswordError)}
                             required
                             disabled={loading}
-                            aria-label="Confirm New Password"
                         />
                         <button
                             type="button"
