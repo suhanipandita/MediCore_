@@ -32,7 +32,7 @@ function AdminLogin() {
     // --- Redirect if ALREADY logged in correctly ---
     useEffect(() => {
         if (session && profile?.role === 'Admin') {
-            navigate('/dashboard', { replace: true });
+            navigate('/admin-dashboard', { replace: true });
         }
     }, [session, profile, navigate]);
 
@@ -73,7 +73,7 @@ function AdminLogin() {
             }
 
             // 3. Success
-            navigate('/dashboard', { replace: true });
+            navigate('/admin-dashboard', { replace: true });
 
         } catch (error: any) {
             console.error("Login failed:", error);

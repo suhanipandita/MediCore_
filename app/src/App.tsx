@@ -22,6 +22,7 @@ import PasswordReset from './pages/PasswordReset';
 import Dashboard from './pages/Dashboard'; // Patient
 import DoctorDashboard from './pages/DoctorDashboard'; // Doctor
 import NurseDashboard from './pages/NurseDashboard'; // Nurse (Placeholder)
+import AdminDashboard from './pages/AdminDashboard';
 
 // --- Patient Signup ---
 import SignupPatient from './pages/SignupPatient';
@@ -141,7 +142,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/nurse-dashboard" element={<NurseDashboard />} />
-        
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/find-doctor" element={<Placeholder title="Find Doctor" />} />
         <Route path="/appointments" element={<Placeholder title="Appointments" />} />
         <Route path="/medical-records" element={<Placeholder title="Medical Records" />} />
