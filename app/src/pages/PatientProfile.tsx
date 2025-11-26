@@ -42,6 +42,7 @@ const MOCK_PATIENT_DATA: { [key: string]: PatientDetails } = {
         mrn: "00234-23452", mobile: "+90390341545", email: "arbaz@gmail.com",
         status: 'Active', avatarUrl: 'https://placehold.co/100x100/90c7c0/ffffff?text=AK',
     },
+    // Add more if needed for testing, defaults will handle others
 };
 
 const MOCK_APPOINTMENTS: Appointment[] = [
@@ -87,11 +88,8 @@ const PatientProfile: React.FC = () => {
     const navigate = useNavigate();
     
     // In a real app, you would fetch data based on patientId
-    const patient = MOCK_PATIENT_DATA[patientId || 'P001'];
-    
-    if (!patient) {
-        return <div className={styles.pageContent}>Patient not found for ID: {patientId}.</div>;
-    }
+    // Fallback to P001 if ID not found in mock for demo purposes
+    const patient = MOCK_PATIENT_DATA[patientId || ''] || MOCK_PATIENT_DATA['P001'];
     
     // --- Sub-Components ---
 

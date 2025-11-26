@@ -1,116 +1,113 @@
 import React, { useState } from 'react';
-import { MoreHorizontal, Search, Download } from 'react-feather';
-import styles from './dashboard.module.css'; // Reusing general table/card styles
-import listStyles from './PatientList.module.css'; // New styles for list specifics
-
-// --- Mock Data Structures ---
-interface Patient {
-    id: number;
-    patientId: string;
-    fullName: string;
-    dob: string;
-    lastVisit: string;
-    status: 'Active' | 'Discharged' | 'Pending';
-}
+import { Search, Filter, X } from 'react-feather';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import styles from './dashboard.module.css';
+import listStyles from './PatientList.module.css';
 
 // --- Mock Data ---
-const mockPatientList: Patient[] = [
-    { id: 1, patientId: 'P00123', fullName: "John Smith", dob: "1985-05-15", lastVisit: "2025-09-14", status: "Active" },
-    { id: 2, patientId: 'P00124', fullName: "Mickel Howard", dob: "2001-11-20", lastVisit: "2025-09-12", status: "Active" },
-    { id: 3, patientId: 'P00125', fullName: "Sara Connor", dob: "1972-01-01", lastVisit: "2025-08-01", status: "Discharged" },
-    { id: 4, patientId: 'P00126', fullName: "Tony Stark", dob: "1970-05-29", lastVisit: "2025-09-10", status: "Active" },
-    { id: 5, patientId: 'P00127', fullName: "Jane Doe", dob: "1995-02-28", lastVisit: "2025-09-05", status: "Pending" },
-    { id: 6, patientId: 'P00128', fullName: "Peter Parker", dob: "2000-08-10", lastVisit: "2025-09-20", status: "Active" },
+const patients = [
+    { id: 1, name: "John smith", pid: "P001", gender: "Male", treatment: "Blood Sugar", progress: "Critical" },
+    { id: 2, name: "Arbaz", pid: "P002", gender: "Male", treatment: "Blood Glucose", progress: "Examining" },
+    { id: 3, name: "Max Black", pid: "P003", gender: "Female", treatment: "Blood Cancer", progress: "Examining" },
+    { id: 4, name: "Becky White", pid: "P004", gender: "Female", treatment: "Muscle Pain", progress: "Stable" },
+    { id: 5, name: "Mahta Bhayankar", pid: "P005", gender: "Female", treatment: "Shoulder Pain", progress: "Stable" },
+    { id: 6, name: "Becky Maxwell", pid: "P006", gender: "Female", treatment: "Blood Sugar", progress: "Critical" },
+    { id: 7, name: "Lionel Messi", pid: "P007", gender: "Male", treatment: "Blood Sugar", progress: "Critical" },
+    { id: 8, name: "Cid Volt", pid: "P008", gender: "Male", treatment: "Blood Cancer", progress: "Examining" },
+    { id: 9, name: "James Well", pid: "P009", gender: "Male", treatment: "Blood Glucose", progress: "Stable" },
+    { id: 10, name: "Bow Sudde", pid: "P010", gender: "Male", treatment: "Muscle Pain", progress: "Stable" },
 ];
 
-// --- Reusable Components ---
 const UserAvatar = ({ src }: { src?: string }) => (
     <div className={styles.avatar} style={src ? { backgroundImage: `url(${src})` } : {}}></div>
 );
 
-const getStatusPillClass = (status: Patient['status']) => {
-    switch (status) {
-        case 'Active': return listStyles.active; 
-        case 'Discharged': return listStyles.discharged; 
-        case 'Pending': return listStyles.pending;
-        default: return '';
-    }
-};
-
 const PatientList: React.FC = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('All');
+    const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [activeFilter, setActiveFilter] = useState("All"); // State for filters
 
-    const filteredPatients = mockPatientList.filter(patient => {
-        const matchesSearch = patient.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              patient.patientId.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = filterStatus === 'All' || patient.status === filterStatus;
-        return matchesSearch && matchesStatus;
+    const getStatusClass = (status: string) => {
+        switch (status) {
+            case 'Critical': return listStyles.critical;
+            case 'Examining': return listStyles.examining;
+            case 'Stable': return listStyles.stable;
+            default: return '';
+        }
+    };
+
+    // --- Filtering Logic ---
+    const filteredPatients = patients.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              p.pid.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesFilter = activeFilter === "All" || p.progress === activeFilter;
+        
+        return matchesSearch && matchesFilter;
     });
 
-    return (
-        <div className={listStyles.patientListContainer}>
-            <div className={`${styles.card} ${listStyles.fullWidthCard}`}>
-                <div className={styles.cardHeader} style={{ flexWrap: 'wrap' }}>
-                    <h2>My Assigned Patients</h2>
-                    <span className={styles.headerSubtitle} style={{ marginRight: 'auto' }}>({filteredPatients.length} patients listed)</span>
-                    
-                    <div className={listStyles.filterControls}>
-                        {/* Status Filter */}
-                        <select 
-                            className={listStyles.selectInput}
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value as Patient['status'] | 'All')}
-                        >
-                            <option value="All">All Statuses</option>
-                            <option value="Active">Active</option>
-                            <option value="Discharged">Discharged</option>
-                            <option value="Pending">Pending</option>
-                        </select>
-                        
-                        {/* Search Input (Reusing DashboardLayout Search styling) */}
-                        <div className={styles.searchWrapper}>
-                            <Search size={18} className={styles.searchIcon} />
-                            {/* Using the same class names from DashboardLayout.module.css for consistency */}
-                            <input 
-                                type="text" 
-                                placeholder="Search by Name or ID" 
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className={styles.searchInput} 
-                                style={{ width: '250px', paddingLeft: '44px' }}
-                            />
-                        </div>
+    // Navigate to profile on click
+    const handleRowClick = (patientId: string) => {
+        navigate(`/patient-profile/${patientId}`);
+    };
 
-                        <button className={listStyles.exportButton}><Download size={18} /> Export</button>
-                    </div>
+    return (
+        <div className={listStyles.container}>
+            
+            <div className={listStyles.listCard}>
+                
+                {/* Filter Row - Now Interactive */}
+                <div className={listStyles.filterRow}>
+                    <button 
+                        className={`${listStyles.filterButton} ${listStyles.filterMain}`}
+                        onClick={() => setActiveFilter("All")}
+                    >
+                        <Filter size={14} /> Filters
+                    </button>
+                    
+                    {/* Individual Filters */}
+                    {['Critical', 'Examining', 'Stable'].map(status => (
+                        <button 
+                            key={status}
+                            className={`${listStyles.filterButton} ${activeFilter === status ? listStyles.active : ''}`}
+                            onClick={() => setActiveFilter(activeFilter === status ? "All" : status)}
+                        >
+                            {status} {activeFilter === status && <X size={14} style={{marginLeft: 4}}/>}
+                        </button>
+                    ))}
                 </div>
 
                 <table className={styles.table}>
                     <thead>
                         <tr>
-                            <th>Patient Name</th>
+                            <th>Name</th>
                             <th>Patient ID</th>
-                            <th>Date of Birth</th>
-                            <th>Last Visit</th>
-                            <th>Status</th>
-                            <th></th>
+                            <th>Gender</th>
+                            <th>Treatment</th>
+                            <th>Progress</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredPatients.map(patient => (
-                            <tr key={patient.id}>
+                            <tr 
+                                key={patient.id} 
+                                className={listStyles.tableRow}
+                                onClick={() => handleRowClick(patient.pid)} // Make row clickable
+                                style={{ cursor: 'pointer' }} 
+                            >
                                 <td>
                                     <div className={styles.tableCellFlex}>
                                         <UserAvatar />
-                                        <span>{patient.fullName}</span>
+                                        <span>{patient.name}</span>
                                     </div>
                                 </td>
-                                <td>{patient.patientId}</td>
-                                <td>{patient.dob}</td>
-                                <td>{patient.lastVisit}</td>
-                                <td><span className={`${styles.statusPill} ${getStatusPillClass(patient.status)}`}>● {patient.status}</span></td>
-                                <td><button className={styles.moreButton}><MoreHorizontal size={20} /></button></td>
+                                <td>{patient.pid}</td>
+                                <td>{patient.gender}</td>
+                                <td>{patient.treatment}</td>
+                                <td>
+                                    <span className={`${listStyles.statusDot} ${getStatusClass(patient.progress)}`}>
+                                        {patient.progress}
+                                    </span>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

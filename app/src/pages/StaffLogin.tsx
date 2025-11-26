@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import { useAppSelector } from '../store/hooks';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { setAuth } from '../store/slices/authSlice';
 import styles from './StaffLogin.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; 
 
-// Import assets
 import googleIcon from '../assets/icons/google-logo.svg';
 import facebookIcon from '../assets/icons/facebook-logo.svg';
 import appleIcon from '../assets/icons/apple-logo.svg';
 import microsoftIcon from '../assets/icons/microsoft-logo.svg';
 
-// Import Error Icon Component
 const ErrorIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#D94C4C" />
@@ -20,6 +19,7 @@ const ErrorIcon = () => (
 
 function StaffLogin() {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const { session, profile } = useAppSelector((state) => state.auth);
 
     const [email, setEmail] = useState("");
@@ -30,7 +30,6 @@ function StaffLogin() {
     const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
-    // --- Redirect if ALREADY logged in with correct role ---
     useEffect(() => {
         if (session && profile) {
             const role = profile.role?.toLowerCase();
@@ -54,7 +53,6 @@ function StaffLogin() {
         setPasswordError(""); return true;
     };
 
-    // --- Event Handlers ---
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setEmailError(""); setPasswordError(""); setGeneralError("");
@@ -62,26 +60,28 @@ function StaffLogin() {
 
         setLoading(true);
         try {
-            // 1. Sign in
-            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({ 
+            const { data, error: signInError } = await supabase.auth.signInWithPassword({ 
                 email: email.trim(), 
                 password 
             });
             
             if (signInError) throw signInError;
-            if (!user) throw new Error("No user found");
+            if (!data.user || !data.session) throw new Error("No user found");
 
-            // 2. Check Role using METADATA (Bypasses RLS issues)
-            const role = user.user_metadata?.role?.toLowerCase();
+            const role = data.user.user_metadata?.role?.toLowerCase();
+
+            if (role !== 'doctor' && role !== 'nurse') {
+                await supabase.auth.signOut();
+                throw new Error("Access Denied. This portal is for Medical Staff only.");
+            }
+
+            // CRITICAL: Update Redux immediately
+            dispatch(setAuth({ session: data.session, user: data.user }));
 
             if (role === 'doctor') {
                 navigate('/doctor-dashboard', { replace: true });
-            } else if (role === 'nurse') {
-                navigate('/nurse-dashboard', { replace: true });
             } else {
-                // Not staff? Logout.
-                await supabase.auth.signOut();
-                throw new Error("Access Denied. This portal is for Medical Staff only.");
+                navigate('/nurse-dashboard', { replace: true });
             }
 
         } catch (error: any) {
@@ -140,7 +140,7 @@ function StaffLogin() {
                                 value={email}
                                 className={`${styles.input} ${emailError || generalError ? styles.inputError : ''}`}
                                 onChange={handleInputChange(setEmail, setEmailError)}
-                                required aria-label="Email" aria-invalid={!!emailError || !!generalError}
+                                required aria-label="Email"
                                 disabled={!!socialLoading}
                             />
                             {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
@@ -152,7 +152,7 @@ function StaffLogin() {
                                 value={password}
                                 className={`${styles.input} ${passwordError || generalError ? styles.inputError : ''}`}
                                 onChange={handleInputChange(setPassword, setPasswordError)}
-                                required aria-label="Password" aria-invalid={!!passwordError || !!generalError}
+                                required aria-label="Password"
                                 disabled={!!socialLoading}
                             />
                             {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}

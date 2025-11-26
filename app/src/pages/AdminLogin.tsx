@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import { useAppSelector } from '../store/hooks';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { setAuth } from '../store/slices/authSlice';
 import styles from './AdminLogin.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; 
 
-// Import assets
 import googleIcon from '../assets/icons/google-logo.svg';
 import facebookIcon from '../assets/icons/facebook-logo.svg';
 import appleIcon from '../assets/icons/apple-logo.svg';
@@ -19,6 +19,7 @@ const ErrorIcon = () => (
 
 function AdminLogin() {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const { session, profile } = useAppSelector((state) => state.auth);
 
     const [email, setEmail] = useState("");
@@ -29,7 +30,6 @@ function AdminLogin() {
     const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
-    // --- Redirect if ALREADY logged in correctly ---
     useEffect(() => {
         if (session && profile?.role === 'Admin') {
             navigate('/admin-dashboard', { replace: true });
@@ -55,24 +55,24 @@ function AdminLogin() {
 
         setLoading(true);
         try {
-            // 1. Sign In
-            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({ 
+            const { data, error: signInError } = await supabase.auth.signInWithPassword({ 
                 email: email.trim(), 
                 password 
             });
             
             if (signInError) throw signInError;
-            if (!user) throw new Error("No user found");
+            if (!data.user || !data.session) throw new Error("No user found");
 
-            // 2. Check Role using METADATA
-            const role = user.user_metadata?.role?.toLowerCase();
+            const role = data.user.user_metadata?.role?.toLowerCase();
 
             if (role !== 'admin') {
                 await supabase.auth.signOut();
                 throw new Error("Access Denied. This portal is for Administrators only.");
             }
 
-            // 3. Success
+            // CRITICAL: Update Redux immediately
+            dispatch(setAuth({ session: data.session, user: data.user }));
+
             navigate('/admin-dashboard', { replace: true });
 
         } catch (error: any) {
@@ -131,7 +131,7 @@ function AdminLogin() {
                                 value={email}
                                 className={`${styles.input} ${emailError || generalError ? styles.inputError : ''}`}
                                 onChange={handleInputChange(setEmail, setEmailError)}
-                                required aria-label="Email" aria-invalid={!!emailError || !!generalError}
+                                required aria-label="Email"
                                 disabled={!!socialLoading}
                             />
                             {emailError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{emailError}</p> </div> )}
@@ -143,7 +143,7 @@ function AdminLogin() {
                                 value={password}
                                 className={`${styles.input} ${passwordError || generalError ? styles.inputError : ''}`}
                                 onChange={handleInputChange(setPassword, setPasswordError)}
-                                required aria-label="Password" aria-invalid={!!passwordError || !!generalError}
+                                required aria-label="Password"
                                 disabled={!!socialLoading}
                             />
                             {passwordError && ( <div className={styles.errorContainer}> <ErrorIcon /> <p className={styles.errorText}>{passwordError}</p> </div> )}

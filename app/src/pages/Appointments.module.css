@@ -1,7 +1,7 @@
-/* --- Appointments Grid Layout (Replicates Image) --- */
+/* --- Appointments Grid Layout --- */
 .appointmentsGrid {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); /* 2:1 ratio for main content and requests */
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); 
     gap: 24px;
     height: 100%;
 }
@@ -12,23 +12,19 @@
     gap: 24px;
 }
 
-/* --- Top Statistics (Total/Pending/Completed) --- */
+/* --- Stats --- */
 .statsHeaderCard {
-    /* Special card for grouping the header and stats */
     padding-bottom: 24px;
 }
 
 .statsHeaderCard .cardHeader {
-     /* Ensures the title and link are aligned horizontally before the grid */
     flex-wrap: nowrap;
     align-items: flex-end;
 }
 
 .statsHeaderCard .cardHeader h2 {
-    /* Reset flex-grow so the title stays left of the link */
     flex-grow: 0;
 }
-
 
 .statsContainer {
     display: grid;
@@ -38,7 +34,7 @@
 }
 
 .statCard {
-    background-color: var(--background-dashboard, #FBFBFB); /* Match background in the image */
+    background-color: var(--background-dashboard, #FBFBFB);
     border-radius: 16px;
     padding: 20px;
     border: 1px solid #F0F0F0;
@@ -73,12 +69,34 @@
     margin: 0;
 }
 
-/* --- Appointment List Table --- */
-.appointmentsTableCard {
-    /* Reusing base card styles */
+/* --- Date Picker Styling --- */
+.datePickerWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push to right */
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
 }
 
-/* Status Pill Variations (replicate dashboard.module.css or define here) */
+.datePickerWrapper:hover {
+    background-color: #f0f0f0;
+}
+
+/* Hide the native date input but keep it clickable/accessible via ref */
+.hiddenDateInput {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: -1; /* Behind the icon, but we use showPicker() API to trigger it */
+}
+
+/* --- Appointment List Table --- */
 .statusPill {
     display: inline-block;
     padding: 4px 10px;
@@ -93,49 +111,26 @@
 }
 
 .completed {
-    background-color: #e6f6ed; /* Light green */
-    color: #4CAF50; /* Green */
+    background-color: #e6f6ed;
+    color: #4CAF50;
 }
 
 .cancelled {
-    background-color: #fdecea; /* Light red */
-    color: #D94C4C; /* Red */
+    background-color: #fdecea;
+    color: #D94C4C;
 }
 
-
-/* --- Appointment Request Card (Right Sidebar) --- */
-
+/* --- Appointment Request Card --- */
 .requestCard {
-    /* Reusing base card style */
-}
-
-.requestGroupHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 16px 0 8px 0;
-}
-
-.requestDate {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-.requestCount {
-    font-size: 13px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    margin: 0;
+    /* Inherits styles from .card */
 }
 
 .requestItem {
     display: grid;
-    grid-template-columns: auto 1fr auto; /* Avatar | Info | Actions */
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 12px;
-    padding: 12px 0;
+    padding: 16px 0;
     border-bottom: 1px solid #F0F0F0;
 }
 .requestItem:last-of-type {
@@ -156,7 +151,7 @@
 }
 
 .requestTime, .requestSession {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-secondary);
     font-weight: 500;
     line-height: 1.4;
@@ -171,29 +166,31 @@
 .requestButton {
     background: none;
     border: 1px solid #E0E0E0;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; /* Circular buttons */
     display: grid;
     place-items: center;
     cursor: pointer;
     color: var(--text-secondary);
-    transition: background-color 0.2s, border-color 0.2s;
+    transition: all 0.2s;
 }
 
-.requestButton.accepted {
+/* Hover effects for action buttons */
+.acceptedHover:hover {
     background-color: #E3F9F7;
     color: var(--primary-teal-dark);
     border-color: #E3F9F7;
 }
 
-.requestButton.rejected {
+.rejectedHover:hover {
     background-color: #FDECEA;
     color: #D94C4C;
     border-color: #FDECEA;
 }
 
-.requestButton:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+@media (max-width: 1100px) {
+    .appointmentsGrid {
+        grid-template-columns: 1fr;
+    }
 }

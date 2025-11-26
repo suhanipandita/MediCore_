@@ -1,66 +1,113 @@
-/* Reusing general card/table styles from dashboard.module.css */
-
-.patientListContainer {
-    width: 100%;
-}
-
-.fullWidthCard {
-    /* Ensures the card uses the full space of the layout */
-    padding: 24px;
-}
-
-.filterControls {
+.container {
     display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.listCard {
+    background-color: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #F0F0F0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+/* Controls Area (Search + Filters) */
+.controlsHeader {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    margin-left: auto; /* Pushes controls to the right */
-    flex-wrap: wrap; 
+    margin-bottom: 24px;
 }
 
-.selectInput {
-    padding: 10px 16px;
-    border: 1px solid var(--border-light);
-    border-radius: 10px;
-    background-color: var(--background-dashboard);
-    font-size: 14px;
-    font-weight: 500;
+.title {
+    font-size: 24px;
+    font-weight: 700;
     color: var(--text-primary);
-    cursor: pointer;
-    min-width: 150px;
+    margin: 0;
 }
 
-.exportButton {
-    background-color: #F0F8F7;
-    color: var(--primary-teal-dark);
-    border: none;
-    border-radius: 10px;
-    padding: 10px 16px;
+.searchWrapper {
+    position: relative;
+    width: 300px;
+}
+
+.searchIcon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.searchInput {
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
     font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+    outline: none;
+}
+
+/* Filter Pills */
+.filterRow {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.filterButton {
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: background-color 0.2s;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #E0E0E0;
+    background: var(--white);
+    color: var(--text-secondary);
+    transition: all 0.2s;
 }
 
-.exportButton:hover {
-    background-color: #E3F9F7;
+.filterButton.active {
+    background-color: var(--background-dashboard); /* Or a darker shade */
+    border-color: #ccc;
 }
 
-/* Status Pill styling - specific for Patient List */
-
-.active {
-    background-color: #E3F9F7;
-    color: #2D706E; /* Teal */
+.filterMain {
+    background-color: #D4EBE8; /* Specific light green for 'Filters' button */
+    color: var(--primary-teal-dark);
+    border: none;
 }
 
-.discharged {
-    background-color: #f0f0f0;
-    color: #6c757d; /* Gray/Secondary */
+/* Table Styles Override */
+.tableRow {
+    height: 60px;
 }
 
-.pending {
-    background-color: #fff3cd; /* Yellow */
-    color: #856404; 
+/* Progress Status Dots */
+.statusDot {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
 }
+
+.statusDot::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.critical { color: #333; }
+.critical::before { background-color: #D94C4C; } /* Red */
+
+.examining { color: #333; }
+.examining::before { background-color: #F2C94C; } /* Yellow */
+
+.stable { color: #333; }
+.stable::before { background-color: #2A7B72; } /* Teal */

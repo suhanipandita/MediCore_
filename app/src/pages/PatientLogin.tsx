@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
-import { useAppSelector } from '../store/hooks';
+// 1. Import useAppDispatch and setAuth
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { setAuth } from '../store/slices/authSlice';
+
 import styles from './PatientLogin.module.css';
 import AuthGraphic from '../components/shared/AuthGraphic/AuthGraphic'; 
 
@@ -18,6 +21,8 @@ const ErrorIcon = () => (
 
 function PatientLogin() {
     const navigate = useNavigate();
+    // 2. Initialize dispatch
+    const dispatch = useAppDispatch();
     const { session, profile } = useAppSelector((state) => state.auth);
 
     const [email, setEmail] = useState("");
@@ -28,7 +33,6 @@ function PatientLogin() {
     const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
-    // --- Redirect if ALREADY logged in correctly ---
     useEffect(() => {
         if (session && profile?.role === 'Patient') {
             navigate('/dashboard', { replace: true });
@@ -55,25 +59,26 @@ function PatientLogin() {
         setLoading(true);
         try {
             // 1. Sign in
-            const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({ 
+            const { data, error: signInError } = await supabase.auth.signInWithPassword({ 
                 email: email.trim(), 
                 password 
             });
             
             if (signInError) throw signInError;
-            if (!user) throw new Error("No user found");
+            if (!data.user || !data.session) throw new Error("No user found");
 
-            // 2. Security Check using METADATA (Bypasses RLS issues)
-            // User metadata is stored in the auth token, so it's available immediately
-            const role = user.user_metadata?.role?.toLowerCase();
+            // 2. Security Check
+            const role = data.user.user_metadata?.role?.toLowerCase();
 
             if (role !== 'patient') {
-                // If not a patient, sign them out immediately
                 await supabase.auth.signOut();
                 throw new Error("Access Denied. This account is not registered as a Patient.");
             }
             
-            // 3. Success
+            // 3. CRITICAL FIX: Update Redux Store synchronously BEFORE navigating
+            dispatch(setAuth({ session: data.session, user: data.user }));
+
+            // 4. Navigate
             navigate('/dashboard', { replace: true });
 
         } catch (error: any) {
@@ -87,6 +92,7 @@ function PatientLogin() {
         }
     };
 
+    // ... (social login and rest of the component remains the same) ...
     const handleSocialLogin = async (provider: 'google' | 'apple' | 'microsoft' | 'facebook') => {
         setGeneralError("");
         setSocialLoading(provider);

@@ -9,32 +9,31 @@ import {
     Search, 
     Bell, 
     User,
-    Package, // Added for Inventory
-    Users    // Added for Staff Management
+    Package,
+    Users
 } from 'react-feather';
 import styles from './DashboardLayout.module.css';
 import logo from '../../assets/icons/logo.svg';
-import { useAppSelector } from '../../store/hooks'; // Import Redux hook
+import { useAppSelector } from '../../store/hooks';
 
 const DashboardLayout: React.FC = () => {
     const location = useLocation();
-    // Get user profile from Redux store
-    const { profile } = useAppSelector((state) => state.auth);
+    // 1. Get 'user' in addition to 'profile'
+    const { user, profile } = useAppSelector((state) => state.auth);
     
-    // Normalize role to lowercase for easier comparison
-    const role = profile?.role?.toLowerCase() ; 
+    // 2. FIX: Use profile role OR fallback to user_metadata role immediately
+    const role = (profile?.role || user?.user_metadata?.role || '').toLowerCase(); 
 
-    // --- Helper: Determine where the "Dashboard" link should go ---
     const getDashboardRoute = () => {
         switch (role) {
             case 'admin': return '/admin-dashboard';
             case 'doctor': return '/doctor-dashboard';
             case 'nurse': return '/nurse-dashboard';
-            default: return '/dashboard';
+            case 'patient': return '/dashboard';
+            default: return '/select-role';
         }
     };
 
-    // --- Helper: Dynamic Page Title ---
     const getPageTitle = () => {
         const path = location.pathname;
         if (path.includes('admin-dashboard')) return 'Admin Dashboard';
@@ -51,7 +50,6 @@ const DashboardLayout: React.FC = () => {
 
     return (
         <div className={styles.layoutContainer}>
-            {/* --- Sidebar --- */}
             <nav className={styles.sidebar}>
                 <div className={styles.sidebarLogo}>
                     <img src={logo} alt="Medicore Logo"/>
@@ -63,7 +61,7 @@ const DashboardLayout: React.FC = () => {
                     <NavLink 
                         to={getDashboardRoute()} 
                         className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}
-                        end // Prevents "Dashboard" from staying active on sub-pages if strict matching is desired
+                        end
                     >
                         <Grid size={20} />
                         <span>Dashboard</span>
@@ -84,8 +82,8 @@ const DashboardLayout: React.FC = () => {
                         </>
                     )}
 
-                    {/* --- DOCTOR / NURSE LINKS --- */}
-                    {(role === 'doctor' || role === 'nurse') && (
+                    {/* --- DOCTOR LINKS (Strictly 3 items) --- */}
+                    {role === 'doctor' && (
                         <>
                             <NavLink to="/appointments" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
                                 <Calendar size={20} /> <span>Appointments</span>
@@ -113,9 +111,7 @@ const DashboardLayout: React.FC = () => {
                 </div>
             </nav>
 
-            {/* --- Main Content --- */}
             <main className={styles.mainContent}>
-                {/* --- Top Bar --- */}
                 <header className={styles.topbar}>
                     <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
                     <div className={styles.topbarActions}>
@@ -132,7 +128,6 @@ const DashboardLayout: React.FC = () => {
                     </div>
                 </header>
 
-                {/* --- Page Content --- */}
                 <div className={styles.pageContent}>
                     <Outlet />
                 </div>
