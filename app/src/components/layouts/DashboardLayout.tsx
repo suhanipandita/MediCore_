@@ -18,10 +18,9 @@ import { useAppSelector } from '../../store/hooks';
 
 const DashboardLayout: React.FC = () => {
     const location = useLocation();
-    // 1. Get 'user' in addition to 'profile'
     const { user, profile } = useAppSelector((state) => state.auth);
     
-    // 2. FIX: Use profile role OR fallback to user_metadata role immediately
+    // Strict check: if no role, default to empty string so no links match
     const role = (profile?.role || user?.user_metadata?.role || '').toLowerCase(); 
 
     const getDashboardRoute = () => {
@@ -39,7 +38,11 @@ const DashboardLayout: React.FC = () => {
         if (path.includes('admin-dashboard')) return 'Admin Dashboard';
         if (path.includes('doctor-dashboard')) return 'Doctor Dashboard';
         if (path.includes('nurse-dashboard')) return 'Nurse Dashboard';
-        if (path.includes('appointments')) return 'Appointments';
+        
+        if (path.includes('my-appointments')) return 'My Appointments';
+        if (path.includes('appointments')) return 'Schedule & Requests';
+        if (path.includes('find-doctors')) return 'Find Doctors'; // Added Title
+        
         if (path.includes('patient-list')) return 'Patient List';
         if (path.includes('medical-records')) return 'Medical Records';
         if (path.includes('billing')) return 'Billing & Invoice';
@@ -57,7 +60,7 @@ const DashboardLayout: React.FC = () => {
                 </div>
 
                 <div className={styles.navLinks}>
-                    {/* 1. Dashboard (Dynamic Link) */}
+                    {/* 1. Dashboard (Always visible) */}
                     <NavLink 
                         to={getDashboardRoute()} 
                         className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}
@@ -66,6 +69,26 @@ const DashboardLayout: React.FC = () => {
                         <Grid size={20} />
                         <span>Dashboard</span>
                     </NavLink>
+
+                    {/* --- PATIENT LINKS --- */}
+                    {role === 'patient' && (
+                        <>
+                            {/* ADDED: Find Doctors Link */}
+                            <NavLink to="/find-doctors" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                                <Search size={20} /> <span>Find Doctors</span>
+                            </NavLink>
+
+                            <NavLink to="/my-appointments" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                                <Calendar size={20} /> <span>Appointments</span>
+                            </NavLink>
+                            <NavLink to="/medical-records" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                                <FileText size={20} /> <span>Medical Records</span>
+                            </NavLink>
+                            <NavLink to="/billing" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                                <CreditCard size={20} /> <span>Bills & Payments</span>
+                            </NavLink>
+                        </>
+                    )}
 
                     {/* --- ADMIN LINKS --- */}
                     {role === 'admin' && (
@@ -82,29 +105,14 @@ const DashboardLayout: React.FC = () => {
                         </>
                     )}
 
-                    {/* --- DOCTOR LINKS (Strictly 3 items) --- */}
-                    {role === 'doctor' && (
+                    {/* --- DOCTOR & NURSE LINKS --- */}
+                    {(role === 'doctor' || role === 'nurse') && (
                         <>
                             <NavLink to="/appointments" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
                                 <Calendar size={20} /> <span>Appointments</span>
                             </NavLink>
                             <NavLink to="/patient-list" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
                                 <UserPlus size={20} /> <span>Patient List</span>
-                            </NavLink>
-                        </>
-                    )}
-
-                    {/* --- PATIENT LINKS --- */}
-                    {role === 'patient' && (
-                        <>
-                            <NavLink to="/appointments" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
-                                <Calendar size={20} /> <span>Appointments</span>
-                            </NavLink>
-                            <NavLink to="/medical-records" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
-                                <FileText size={20} /> <span>Medical Records</span>
-                            </NavLink>
-                            <NavLink to="/billing" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
-                                <CreditCard size={20} /> <span>Bills & Payments</span>
                             </NavLink>
                         </>
                     )}

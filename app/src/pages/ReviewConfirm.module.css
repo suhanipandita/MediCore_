@@ -1,0 +1,194 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: var(--text-primary);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.closeButton:hover {
+  color: var(--primary-teal-dark);
+}
+
+.errorMessage {
+  text-align: center;
+  color: #D94C4C; /* Using error color from PatientLogin.module.css */
+  font-weight: 500;
+  padding: 1rem;
+}
+
+/* --- Info Cards (Generic styling for the white bordered boxes) --- */
+.infoCard {
+  padding: 1rem 1.25rem;
+  background-color: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Spacing between elements within the card */
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.editButton {
+  background: none;
+  border: none;
+  color: var(--primary-teal-dark);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+.editButton:hover {
+  background-color: #e0f2f1; /* Light hover background */
+}
+
+.detailText {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* --- Doctor Info Specifics (reusing styles from ScheduleAppointment) --- */
+.infoCard > .doctorImage { /* Targeting image specifically in .infoCard */
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-right: 1rem; /* Space between image and text */
+}
+
+.infoCard > .doctorDetails { /* Targeting details specifically in .infoCard */
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Override flex-direction for the doctor card to make it inline */
+.infoCard:first-of-type { /* Target the doctor card specifically */
+    flex-direction: row;
+    align-items: center;
+}
+
+.doctorName {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.doctorSpeciality {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.doctorLocation {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.locationIcon {
+  color: var(--primary-teal-dark);
+}
+
+
+/* --- Book Appointment Button --- */
+.buttonContainer {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-light);
+  padding-top: 1.5rem;
+}
+
+.bookButton {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-teal-dark);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.bookButton:hover {
+  background-color: #1e5a55; /* Darker teal */
+}
+
+/* --- NEW STYLE FOR PATIENT INPUT --- */
+.patientNameInput {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  outline: none;
+}
+.patientNameInput:focus {
+  border-color: var(--primary-teal-dark);
+  box-shadow: 0 0 0 2px rgba(42, 123, 114, 0.15);
+}

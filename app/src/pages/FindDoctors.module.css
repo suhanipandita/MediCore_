@@ -1,0 +1,367 @@
+/* --- Base Container --- */
+.pageContainer {
+  width: 100%;
+  max-width: 1440px; /* Max width from design */
+  margin: 0 auto;
+  padding: 1rem 2rem; /* Padding around the whole page */
+  background-color: var(--white);
+  flex-grow: 1;
+}
+
+/* --- Main Content (Sidebar + Results) --- */
+.mainContent {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* --- Filters Sidebar --- */
+.filtersSidebar {
+  flex: 0 0 280px; /* Fixed width for sidebar */
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  /* Allow sidebar to scroll if filters are too tall */
+  max-height: calc(100vh - 120px); /* Adjust 120px based on header height */
+  overflow-y: auto;
+}
+
+.filterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.filterHeader h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.resetButton {
+  background: none;
+  border: none;
+  color: var(--primary-teal-dark);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.filterGroup {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.5rem;
+}
+.filterGroup:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.filterTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.filterTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.toggleIcon {
+  color: var(--primary-teal-dark);
+  cursor: pointer;
+}
+
+.filterDescription {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.selectInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--white);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.starGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.starButton {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--border-light);
+  background: var(--white);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.starButton:hover,
+.starButton.active {
+  background-color: var(--primary-teal-dark);
+  color: var(--white);
+  border-color: var(--primary-teal-dark);
+}
+
+/* --- NEW STYLES --- */
+
+/* Consultation Fee Slider */
+.rangeSliderContainer {
+  padding: 0.5rem 0.25rem;
+}
+.rangeSlider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--border-light);
+  outline: none;
+  border-radius: 2px;
+}
+.rangeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--primary-teal-dark);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.rangeSlider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--primary-teal-dark);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.rangeLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* Date Input */
+.dateInputWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--white);
+  padding: 0.75rem;
+}
+.dateInput {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.dateInput::placeholder {
+  color: var(--text-secondary);
+}
+.dateIcon {
+  color: var(--text-secondary);
+  margin-left: 0.5rem;
+}
+
+/* Checkbox and Radio Groups */
+.checkboxGroup,
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.checkboxGroup label,
+.radioGroup label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.checkboxGroup input,
+.radioGroup input {
+  /* You can add custom styles for checkboxes/radios here */
+  cursor: pointer;
+}
+
+/* --- Results Section --- */
+.resultsSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --- Doctor Card --- */
+.doctorCard {
+  display: flex;
+  gap: 1.5rem;
+  background-color: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.doctorInfo {
+  flex: 1.5;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.doctorImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-light);
+}
+
+.doctorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.doctorName {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.doctorSpeciality {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--primary-teal-dark);
+  font-weight: 600;
+}
+
+.doctorMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.starIcon {
+  color: #f5a623; /* Yellow for star */
+  fill: #f5a623;
+  margin-right: 0.25rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.viewProfileButton {
+  background: none;
+  border: none;
+  color: var(--primary-teal-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  padding: 0;
+  text-align: left;
+  width: fit-content;
+}
+
+.doctorAvailability {
+  flex: 1;
+  min-width: 320px; /* Ensure availability grid has space */
+}
+
+.availabilityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.availabilityHeader h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.viewAllLink {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-teal-dark);
+}
+
+.availabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.availabilitySlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.slotDate {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.slotCount {
+  font-size: 0.8rem;
+}
+
+.available {
+  background-color: #e0f2f1; /* Light teal */
+  color: var(--primary-teal-dark);
+  border: 1px solid #b2dfdb;
+}
+
+.unavailable {
+  background-color: #f1f3f5; /* Light gray */
+  color: #adb5bd; /* Gray text */
+  border: 1px solid #e9ecef;
+}

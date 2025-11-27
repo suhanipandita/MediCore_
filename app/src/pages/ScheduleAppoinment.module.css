@@ -1,0 +1,284 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+.modal {
+  background-color: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px; /* Max width from image */
+  padding: 2rem;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Spacing between sections */
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.5rem;
+  margin-bottom: 0.5rem; /* Adjust margin if needed */
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.75rem; /* Larger title */
+  color: var(--text-primary);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.closeButton:hover {
+  color: var(--primary-teal-dark);
+}
+
+/* --- Doctor Info Card --- */
+.doctorInfoCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background-color: #f8f9fa; /* Light background */
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+}
+
+.doctorImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.doctorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.doctorName {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.doctorSpeciality {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.doctorLocation {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.locationIcon {
+  color: var(--primary-teal-dark);
+}
+
+/* --- Section Titles --- */
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+/* --- Reason for Visit Select --- */
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+.reasonSelect {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--white);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  -webkit-appearance: none; /* Remove default arrow for Chrome/Safari */
+  -moz-appearance: none;    /* Remove default arrow for Firefox */
+  appearance: none;         /* Remove default arrow for other browsers */
+  cursor: pointer;
+}
+.reasonSelect:focus {
+  outline: none;
+  border-color: var(--primary-teal-dark);
+}
+
+.selectArrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none; /* Make arrow unclickable */
+}
+
+
+/* --- Date Picker --- */
+.datePicker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--white);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer; /* Indicate it's clickable */
+}
+.datePicker .react-feather { /* Style the calendar icon */
+  color: var(--text-secondary);
+}
+
+/* --- Time of Day Toggle Buttons --- */
+.timeOfDayToggle {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f1f3f5; /* Light gray background */
+  border-radius: 8px;
+  padding: 0.25rem; /* Inner padding */
+  margin-bottom: 1.5rem;
+}
+
+.timeOfDayButton {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0.75rem 0.5rem;
+  border-radius: 6px; /* Slightly smaller radius than container */
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.timeOfDayButton.active {
+  background-color: var(--primary-teal-dark);
+  color: var(--white);
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.timeOfDayButton .react-feather {
+  width: 18px;
+  height: 18px;
+}
+.timeOfDayButton.active .react-feather {
+  color: var(--white);
+}
+
+/* --- Time Slots Grid --- */
+.timeSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns as per image */
+  gap: 0.75rem;
+}
+
+.timeSlotButton {
+  background-color: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.timeSlotButton:hover {
+  border-color: var(--primary-teal-dark);
+}
+
+.timeSlotButton.selected {
+  background-color: var(--primary-teal-dark);
+  color: var(--white);
+  border-color: var(--primary-teal-dark);
+  font-weight: 600;
+}
+
+/* --- Added this style --- */
+.noSlotsText {
+  grid-column: 1 / -1; /* Span all 3 columns */
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+/* --- End new style --- */
+
+/* --- Continue Button --- */
+.buttonContainer {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-light);
+  padding-top: 1.5rem;
+}
+
+.continueButton {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-teal-dark);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.continueButton:hover:not(:disabled) {
+  background-color: #1e5a55; /* Darker teal */
+}
+
+.continueButton:disabled {
+  background-color: #a6c3c2; /* Lighter, disabled color */
+  cursor: not-allowed;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}

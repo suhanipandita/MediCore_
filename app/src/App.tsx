@@ -17,6 +17,9 @@ import StaffLogin from './pages/StaffLogin';
 import AdminLogin from './pages/AdminLogin';
 import ForgotPassword from './pages/ForgotPassword';
 import PasswordReset from './pages/PasswordReset';
+import FindDoctors from './pages/FindDoctors';
+import ScheduleAppointment from './pages/ScheduleAppointment';
+import ReviewConfirm from './pages/ReviewConfirm';
 
 // --- Dashboards ---
 import Dashboard from './pages/Dashboard'; // Patient
@@ -25,6 +28,7 @@ import NurseDashboard from './pages/NurseDashboard'; // Nurse
 import AdminDashboard from './pages/AdminDashboard';
 
 // --- Features ---
+import PatientAppointments from './pages/PatientAppointments';
 import Appointments from './pages/Appointments';
 import PatientList from './pages/PatientList';
 import PatientProfile from './pages/PatientProfile';
@@ -78,7 +82,7 @@ function App() {
       try {
         // 1. Check current session
         const { data: { session: currentSession }, error } = await supabase.auth.getSession();
-        
+
         if (error) throw error;
 
         if (mounted) {
@@ -115,20 +119,20 @@ function App() {
         if (!mounted) return;
 
         const userId = currentSession?.user?.id;
-        
+
         dispatch(setAuth({ session: currentSession, user: currentSession?.user ?? null }));
 
         if (userId) {
-           // Fetch profile in background
-           fetchProfile(userId).then(profile => {
-             if(mounted) dispatch(setProfile(profile));
-           });
+          // Fetch profile in background
+          fetchProfile(userId).then(profile => {
+            if (mounted) dispatch(setProfile(profile));
+          });
         } else {
-           dispatch(setProfile(null));
-           // Handle Logout Redirect
-           if (window.location.pathname.includes('dashboard')) {
-             navigate('/select-role', { replace: true });
-           }
+          dispatch(setProfile(null));
+          // Handle Logout Redirect
+          if (window.location.pathname.includes('dashboard')) {
+            navigate('/select-role', { replace: true });
+          }
         }
       }
     );
@@ -141,18 +145,18 @@ function App() {
   }, [dispatch, navigate]);
 
   if (isLoading) {
-      return (
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh', 
-          color: '#2D706E',
-          fontFamily: 'sans-serif' 
-        }}>
-          <h3>Loading MediCore...</h3>
-        </div>
-      );
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        color: '#2D706E',
+        fontFamily: 'sans-serif'
+      }}>
+        <h3>Loading MediCore...</h3>
+      </div>
+    );
   }
 
   return (
@@ -165,7 +169,7 @@ function App() {
       {/* --- Group 2: Auth Routes --- */}
       <Route element={<Outlet />}>
         <Route path="/select-role" element={<RoleSelection />} />
-        
+
         {/* Patient Flow */}
         <Route path="/login-patient" element={<PatientLogin />} />
         <Route path="/signup-patient" element={<SignupPatient />} />
@@ -195,19 +199,21 @@ function App() {
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/nurse-dashboard" element={<NurseDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        
+
         {/* Features */}
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/patient-list" element={<PatientList />} />
         <Route path="/patient-profile/:patientId" element={<PatientProfile />} />
-
-        <Route path="/find-doctor" element={<Placeholder title="Find Doctor" />} />
+        <Route path="/my-appointments" element={<PatientAppointments />} />
+        <Route path="/find-doctors" element={<FindDoctors />} />
+        <Route path="/schedule-appointment/:doctorId" element={<ScheduleAppointment />} />
+        <Route path="/review-confirm/:doctorId" element={<ReviewConfirm />} />
         <Route path="/medical-records" element={<Placeholder title="Medical Records" />} />
         <Route path="/billing" element={<Placeholder title="Bills & Payments" />} />
         <Route path="/staff-management" element={<Placeholder title="Staff Management" />} />
         <Route path="/inventory" element={<Placeholder title="Inventory" />} />
       </Route>
-      
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

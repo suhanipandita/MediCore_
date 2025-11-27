@@ -1,0 +1,207 @@
+.pageContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  width: 250px;
+}
+
+.searchIcon {
+  color: var(--text-secondary);
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  margin-left: 0.5rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  width: 100%;
+}
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  transition: background-color 0.2s;
+}
+.iconButton:hover {
+  background-color: #e9ecef;
+}
+
+.profileIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+/* Filter Bar */
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.filterButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.filterTag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #eef7f6; /* Light teal */
+  border: 1px solid #dceaea;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary-teal-dark);
+}
+
+.removeTagButton {
+  background: none;
+  border: none;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: var(--primary-teal-dark);
+  cursor: pointer;
+}
+
+/* Table */
+.tableContainer {
+  background-color: var(--white);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.appointmentsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.appointmentsTable th,
+.appointmentsTable td {
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.95rem;
+}
+
+.appointmentsTable th {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  background-color: #f8f9fa;
+}
+
+.appointmentsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.patientCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.patientAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Status Colors */
+.status {
+  position: relative;
+  padding-left: 1.25rem;
+  font-weight: 500;
+}
+
+.status::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status.cancelled {
+  color: #dc3545;
+}
+.status.cancelled::before {
+  background-color: #dc3545;
+}
+
+.status.rescheduled {
+  color: #fd7e14;
+}
+.status.rescheduled::before {
+  background-color: #fd7e14;
+}
+
+.status.completed {
+  color: #198754;
+}
+.status.completed::before {
+  background-color: #198754;
+}
