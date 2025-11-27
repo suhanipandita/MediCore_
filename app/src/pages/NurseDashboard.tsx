@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, FileText, Package, ChevronRight, CheckCircle, Activity } from 'react-feather';
+import { Calendar, FileText, Package, CheckCircle, Activity } from 'react-feather';
 import styles from './dashboard.module.css'; // Generic styles
 import nurseStyles from './NurseDashboard.module.css'; // Specific styles
 import { useAppDispatch, useAppSelector } from '../store/hooks';

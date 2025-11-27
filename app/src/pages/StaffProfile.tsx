@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Mail, Phone, Clock, Calendar, FileText, Activity } from 'react-feather';
+import { ChevronLeft, Mail, Phone, Clock, FileText, Activity } from 'react-feather';
 import styles from './dashboard.module.css';
 import profileStyles from './PatientProfile.module.css'; // Reusing layout styles
 import { useAppSelector } from '../store/hooks';

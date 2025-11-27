@@ -56,9 +56,7 @@
 }
 
 /* --- Profile Card (Left Top) --- */
-.profileCard {
-    /* Uses existing .card styles */
-}
+
 .profileCard h2 {
     font-size: 18px;
     font-weight: 700;
@@ -153,9 +151,6 @@
 
 
 /* --- Prescription Card (Right Top) --- */
-.prescriptionCard {
-    /* Uses existing .card styles */
-}
 .prescriptionCard h2 {
     font-size: 18px;
     font-weight: 700;

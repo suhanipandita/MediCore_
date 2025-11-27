@@ -38,17 +38,6 @@ const FiltersSidebar: React.FC<SidebarProps> = ({ filters, setFilters }) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
-  const toggleCheckbox = (field: 'timeOfDay' | 'experienceRanges', value: string) => {
-    setFilters((prev) => {
-      const currentList = prev[field];
-      if (currentList.includes(value)) {
-        return { ...prev, [field]: currentList.filter((item) => item !== value) };
-      } else {
-        return { ...prev, [field]: [...currentList, value] };
-      }
-    });
-  };
-
   const resetFilters = () => {
     setFilters({
       immediateCare: false,

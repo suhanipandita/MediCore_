@@ -1,13 +1,12 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Droplet, Heart, Activity, User, Calendar, Clock, Edit2 } from 'react-feather';
+import { useParams } from 'react-router-dom';
+import { Droplet, Heart, Activity, User, Calendar, Clock } from 'react-feather';
 import styles from './dashboard.module.css'; 
 import profileStyles from './PatientProfile.module.css';
 import { useAppSelector } from '../store/hooks';
 
 const PatientProfile: React.FC = () => {
     const { patientId } = useParams<{ patientId: string }>();
-    const navigate = useNavigate();
     
     // Retrieve patient data from Redux
     const patient = useAppSelector(state => 

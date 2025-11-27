@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Sliders, MoreVertical, FileText, Calendar } from 'react-feather';
 import styles from './dashboard.module.css'; // Reusing common dashboard card styles
 import listStyles from './PatientList.module.css'; // Reusing list styles for consistency
-import { useAppSelector } from '../store/hooks';
 
 // Helper types for our combined view
 interface MedicalRecord {
@@ -26,7 +25,6 @@ const MOCK_RECORDS: MedicalRecord[] = [
 
 const MedicalRecords: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAppSelector(state => state.auth);
     const [search, setSearch] = useState('');
     const [filterType, setFilterType] = useState('All');
 

@@ -15,7 +15,7 @@ const StaffManagement: React.FC = () => {
     const [roleFilter, setRoleFilter] = useState<'All' | 'Doctor' | 'Nurse'>('All');
     const [deptFilter, setDeptFilter] = useState<string>('All');
     const [showModal, setShowModal] = useState(false);
-    const [search, setSearch] = useState('');
+    const [search] = useState('');
 
     // --- Add Staff Form State ---
     const [newStaff, setNewStaff] = useState({ name: '', role: 'Doctor', department: '' });
