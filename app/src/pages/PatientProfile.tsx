@@ -1,243 +1,108 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Download, Upload, Plus, FileText, ChevronLeft } from 'react-feather';
-import styles from './dashboard.module.css'; // General styles (card, table)
-import profileStyles from './PatientProfile.module.css'; // Specific profile layout styles
-
-// --- Mock Data Structures ---
-interface PatientDetails {
-    id: string;
-    name: string;
-    age: number;
-    gender: string;
-    mrn: string;
-    mobile: string;
-    email: string;
-    status: 'Active' | 'Inactive';
-    avatarUrl?: string;
-}
-
-interface Appointment {
-    date: string;
-    time: string;
-    type: string;
-    status: 'Completed' | 'Upcoming';
-}
-
-interface Report {
-    type: string;
-    date: string;
-    action: 'Download' | 'View' | 'Delete';
-}
-
-// Mock Data
-const MOCK_PATIENT_DATA: { [key: string]: PatientDetails } = {
-    'P001': {
-        id: 'P001', name: "Kate Prokopchuk", age: 45, gender: "Female",
-        mrn: "00234-23451", mobile: "+90390341544", email: "katepro@gmail.com",
-        status: 'Active', avatarUrl: 'https://placehold.co/100x100/90c7c0/ffffff?text=KP',
-    },
-    'P002': {
-        id: 'P002', name: "Arbaz Khan", age: 32, gender: "Male",
-        mrn: "00234-23452", mobile: "+90390341545", email: "arbaz@gmail.com",
-        status: 'Active', avatarUrl: 'https://placehold.co/100x100/90c7c0/ffffff?text=AK',
-    },
-    // Add more if needed for testing, defaults will handle others
-};
-
-const MOCK_APPOINTMENTS: Appointment[] = [
-    { date: "05 Nov", time: "4.00 pm", type: "Muscle pain", status: "Completed" },
-    { date: "05 Nov", time: "4.00 pm", type: "Muscle pain", status: "Completed" },
-    { date: "05 Nov", time: "4.00 pm", type: "Muscle pain", status: "Completed" },
-    { date: "05 Nov", time: "4.00 pm", type: "Muscle pain", status: "Completed" },
-    { date: "05 Nov", time: "4.00 pm", type: "Muscle pain", status: "Completed" },
-    { date: "05 Nov", time: "4.00 pm", type: "Muscle pain", status: "Completed" },
-];
-
-const MOCK_REPORTS: Report[] = [
-    { type: "Blood report", date: "12 March 2022", action: "Download" },
-    { type: "Checkup", date: "12 March 2022", action: "Download" },
-    { type: "VIP Test", date: "12 March 2022", action: "Download" },
-    { type: "Muscle Pain", date: "12 March 2022", action: "Download" },
-    { type: "BP Checkup", date: "12 March 2022", action: "Download" },
-    { type: "Blood report", date: "12 March 2022", action: "Download" },
-];
-
-// --- Helper Components ---
-
-const UserAvatar = ({ src }: { src: string }) => (
-    <div className={profileStyles.avatar} style={{ backgroundImage: `url(${src})` }}></div>
-);
-
-const ReportIcon = () => (
-    <div className={profileStyles.reportIcon} style={{backgroundColor: '#E3F9F7', color: '#2D706E', borderRadius: '8px'}}>
-        <FileText size={18} />
-    </div>
-);
-
-const getStatusPillClass = (status: Appointment['status']) => {
-    switch (status) {
-        case 'Completed': return profileStyles.completed;
-        case 'Upcoming': return profileStyles.upcoming;
-        default: return '';
-    }
-};
+import { Droplet, Heart, Activity, User, Calendar, Clock, Edit2 } from 'react-feather';
+import styles from './dashboard.module.css'; 
+import profileStyles from './PatientProfile.module.css';
+import { useAppSelector } from '../store/hooks';
 
 const PatientProfile: React.FC = () => {
     const { patientId } = useParams<{ patientId: string }>();
     const navigate = useNavigate();
     
-    // In a real app, you would fetch data based on patientId
-    // Fallback to P001 if ID not found in mock for demo purposes
-    const patient = MOCK_PATIENT_DATA[patientId || ''] || MOCK_PATIENT_DATA['P001'];
+    // Retrieve patient data from Redux
+    const patient = useAppSelector(state => 
+        state.patients.patients.find(p => p.id === patientId)
+    );
     
-    // --- Sub-Components ---
+    if (!patient) return <div className={styles.pageContent}>Patient not found.</div>;
 
-    const ProfileCard: React.FC<{ details: PatientDetails }> = ({ details }) => (
-        <div className={`${styles.card} ${profileStyles.profileCard}`}>
-            <h2>Profile</h2>
-            <div className={profileStyles.profileContent}>
-                <UserAvatar src={details.avatarUrl || 'https://placehold.co/100x100/90c7c0/ffffff?text=KP'} />
-                <div className={profileStyles.profileDetails}>
-                    <div className={profileStyles.detailRow}>
-                        <span>Name</span>
-                        <strong>{details.name}</strong>
-                    </div>
-                    <div className={profileStyles.detailRow}>
-                        <span>Age</span>
-                        {/* Displaying age and gender, matching the image format (45y) Female */}
-                        <strong>({details.age}y) {details.gender}</strong>
-                    </div>
-                     <div className={profileStyles.detailRow}>
-                        <span>MRN</span>
-                        <strong>{details.mrn}</strong>
-                    </div>
-                    <div className={profileStyles.detailRow}>
-                        <span>Mobile Number</span>
-                        <strong>{details.mobile}</strong>
-                    </div>
-                    <div className={profileStyles.detailRow}>
-                        <span>Email</span>
-                        <strong>{details.email}</strong>
-                    </div>
-                    <div className={profileStyles.detailRow}>
-                        <span>Member Status</span>
-                        <strong className={profileStyles.activeStatus}>{details.status}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
-    const AppointmentsCard: React.FC = () => (
-        <div className={`${styles.card} ${profileStyles.appointmentsCard}`}>
-            <div className={styles.cardHeader} style={{ marginBottom: '16px' }}>
-                <h2>This Year Appointments</h2>
-                <a href="#">View all &gt;</a>
-            </div>
-            
-            <table className={`${styles.table} ${profileStyles.smallTable}`}>
-                <thead>
-                    <tr>
-                        <th className={profileStyles.narrowCol}>Date & Time</th>
-                        <th>Treatment Type</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {MOCK_APPOINTMENTS.map((app, index) => (
-                        <tr key={index} className={profileStyles.highlightRow}>
-                            <td>{app.date}/{app.time}</td>
-                            <td>{app.type}</td>
-                            <td>
-                                <span className={`${profileStyles.statusDot} ${getStatusPillClass(app.status)}`}>
-                                    ● {app.status}
-                                </span>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-
-    const PrescriptionCard: React.FC = () => (
-        <div className={`${styles.card} ${profileStyles.prescriptionCard}`}>
-            <h2>Prescription</h2>
-            <textarea
-                className={profileStyles.prescriptionInput}
-                placeholder="Type..."
-            />
-            <button className={profileStyles.prescriptionButton}>
-                <Upload size={18} /> Upload Prescription
-            </button>
-        </div>
-    );
-
-    const ReportCard: React.FC = () => (
-        <div className={`${styles.card} ${profileStyles.reportCard}`}>
-            <div className={styles.cardHeader} style={{ marginBottom: '16px' }}>
-                <h2>Report</h2>
-                <button className={profileStyles.addReportButton}>
-                     <Plus size={18} /> Add Reports
-                </button>
-            </div>
-            <table className={`${styles.table} ${profileStyles.smallTable}`}>
-                <thead>
-                    <tr>
-                        <th>Treatment Type</th>
-                        <th>Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {MOCK_REPORTS.map((report, index) => (
-                        <tr key={index}>
-                            <td>
-                                <div className={styles.tableCellFlex}>
-                                    <ReportIcon />
-                                    <span>{report.type}</span>
-                                </div>
-                            </td>
-                            <td>{report.date}</td>
-                            <td>
-                                <button className={profileStyles.reportActionButton}>
-                                    <Download size={18} />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+    const vitals = patient.vitals || { bp: '--', hr: '--', glucose: '--', spo2: '--', pain: '--', respiratory: '--', temp: '--' };
 
     return (
         <div className={profileStyles.pageContainer}>
-            {/* Back Button and Title */}
-             <div className={profileStyles.backButtonContainer}>
-                <button onClick={() => navigate(-1)} className={profileStyles.backButton}>
-                    <ChevronLeft size={20} /> Back to Patient List
-                </button>
-            </div>
-            <h1 className={profileStyles.pageTitle}>Patient Profile: {patient.name}</h1>
-            
-            {/* Main Content Grid */}
-            <div className={profileStyles.mainGrid}>
-                {/* Left Column */}
-                <div className={profileStyles.leftColumn}>
-                    <ProfileCard details={patient} />
-                    <AppointmentsCard />
+            {/* Top Row: Profile & Appointment Info */}
+            <div className={profileStyles.topRow}>
+                {/* Profile Card */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}><h2>Profile</h2></div>
+                    <div className={profileStyles.profileCardContent}>
+                        <div className={profileStyles.avatarLarge} style={{backgroundImage: patient.avatarUrl ? `url(${patient.avatarUrl})` : undefined}}></div>
+                        <div className={profileStyles.profileInfo}>
+                            <span className={profileStyles.label}>Name</span> <span className={profileStyles.value}>{patient.name}</span>
+                            <span className={profileStyles.label}>Date of birth</span> <span className={profileStyles.value}>{patient.dob}</span>
+                            <span className={profileStyles.label}>Gender</span> <span className={profileStyles.value}>{patient.gender}</span>
+                            <span className={profileStyles.label}>Diagnosis</span> <span className={profileStyles.value}>{patient.diagnosis}</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Right Column */}
-                <div className={profileStyles.rightColumn}>
-                    <PrescriptionCard />
-                    <ReportCard />
+                {/* Appointment Info */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}><h2>Appointment Info</h2> <a href="#">View all &gt;</a></div>
+                    <div className={profileStyles.apptGrid}>
+                        <div className={profileStyles.miniCard}>
+                            <div className={profileStyles.miniIcon}><User size={16}/></div>
+                            <span className={profileStyles.miniLabel}>Doctor</span>
+                            <span className={profileStyles.miniValue}>{patient.doctor}</span>
+                        </div>
+                        <div className={profileStyles.miniCard}>
+                            <div className={profileStyles.miniIcon}><Calendar size={16}/></div>
+                            <span className={profileStyles.miniLabel}>Last Visit</span>
+                            <span className={profileStyles.miniValue}>{patient.lastVisit}</span>
+                        </div>
+                        <div className={profileStyles.miniCard}>
+                            <div className={profileStyles.miniIcon}><Clock size={16}/></div>
+                            <span className={profileStyles.miniLabel}>Upcoming Visit</span>
+                            <span className={profileStyles.miniValue}>{patient.upcomingVisit}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Row: Vital Signs & Nurse Notes */}
+            <div className={profileStyles.bottomRow}>
+                {/* Vital Signs */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}><h2>Vital Signs</h2> <a href="#">View all &gt;</a></div>
+                    <div className={profileStyles.vitalsGrid}>
+                        <VitalCard icon={<Droplet size={20}/>} label="Blood Pressure (mmHg)" value={`${vitals.bp} mmHg`} />
+                        <VitalCard icon={<Heart size={20}/>} label="Heart Rate (BPM)" value={`${vitals.hr} BPM`} />
+                        <VitalCard icon={<Activity size={20}/>} label="Blood Glucose (mm/dL)" value={`${vitals.glucose} mg/dL`} />
+                        <VitalCard icon={<Activity size={20}/>} label="Oxygen Saturation (%)" value={`${vitals.spo2}%`} />
+                        <VitalCard icon={<Activity size={20}/>} label="Pain Scale (0-10)" value={vitals.pain} />
+                        <VitalCard icon={<Activity size={20}/>} label="Respiratory Rate (BPM)" value={`${vitals.respiratory} BPM`} />
+                    </div>
+                </div>
+
+                {/* Nurse Notes */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}><h2>Nurse Notes</h2> <button style={{border:'none', background:'none', color:'#2A7B72', fontWeight:600}}>+ Add</button></div>
+                    <ul className={profileStyles.timeline}>
+                        {(patient.notes && patient.notes.length > 0) ? patient.notes.map((note, i) => (
+                            <li key={i} className={profileStyles.timelineItem}>
+                                <p className={profileStyles.noteText}>{note.text}</p>
+                                <span className={profileStyles.noteDate}>{note.date}</span>
+                            </li>
+                        )) : (
+                            <li className={profileStyles.timelineItem}>
+                                <p className={profileStyles.noteText}>You have an appointment with Dr. Arjun Mehta tomorrow at 10:30 AM.</p>
+                                <span className={profileStyles.noteDate}>12/09/2023</span>
+                            </li>
+                        )}
+                    </ul>
                 </div>
             </div>
         </div>
     );
 }
+
+const VitalCard = ({ icon, label, value }: any) => (
+    <div className={profileStyles.vitalCard}>
+        <button className={profileStyles.editBtn}>Edit</button>
+        <div className={profileStyles.vitalIcon}>{icon}</div>
+        <span className={profileStyles.vitalLabel}>{label}</span>
+        <span className={profileStyles.vitalValue}>{value}</span>
+    </div>
+);
 
 export default PatientProfile;

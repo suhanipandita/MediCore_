@@ -1,237 +1,147 @@
-/* --- Base Container --- */
+/* app/src/pages/FindDoctors.module.css */
+
 .pageContainer {
-  width: 100%;
-  max-width: 1440px; /* Max width from design */
-  margin: 0 auto;
-  padding: 1rem 2rem; /* Padding around the whole page */
-  background-color: var(--white);
-  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  padding: 24px 32px;
+  background-color: var(--background-dashboard, #FBFBFB);
+  min-height: 100vh;
 }
 
-/* --- Main Content (Sidebar + Results) --- */
 .mainContent {
   display: flex;
-  gap: 2rem;
-  align-items: flex-start;
+  gap: 24px;
+  max-width: 1320px; /* Increased slightly to fit content comfortably */
+  width: 100%;
+  align-items: flex-start; /* CRITICAL: Ensures Sidebar and Cards align at the top */
 }
 
-/* --- Filters Sidebar --- */
+/* --- Sidebar --- */
 .filtersSidebar {
-  flex: 0 0 280px; /* Fixed width for sidebar */
-  background-color: #f8f9fa;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 1.5rem;
-  /* Allow sidebar to scroll if filters are too tall */
-  max-height: calc(100vh - 120px); /* Adjust 120px based on header height */
-  overflow-y: auto;
+  width: 280px;
+  flex-shrink: 0;
+  background-color: var(--white);
+  border: 1px solid #E0E0E0;
+  border-radius: 16px;
+  padding: 24px; /* MATCHES CARD PADDING */
+  height: fit-content;
+  position: sticky;
+  top: 24px;
+  z-index: 10;
 }
 
 .filterHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #F0F0F0;
 }
 
 .filterHeader h3 {
+  font-size: 18px;
   margin: 0;
-  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
 .resetButton {
   background: none;
   border: none;
-  color: var(--primary-teal-dark);
+  color: var(--primary-teal-dark, #2A7B72);
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  font-size: 0.9rem;
   padding: 0;
 }
 
-.filterGroup {
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-light);
-  padding-bottom: 1.5rem;
-}
-.filterGroup:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
+.filterGroup { margin-bottom: 24px; }
 
 .filterTitleRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.25rem;
+  margin-bottom: 8px;
 }
 
 .filterTitle {
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 0.75rem;
   display: block;
-}
-
-.toggleIcon {
-  color: var(--primary-teal-dark);
-  cursor: pointer;
+  margin-bottom: 8px;
 }
 
 .filterDescription {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+  font-size: 12px;
+  color: #6c757d;
+  line-height: 1.4;
   margin: 0;
 }
 
-.selectInput {
+.toggleIcon { color: #ccc; cursor: pointer; }
+
+.selectInput, .dateInput {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-light);
+  padding: 10px;
   border-radius: 8px;
-  background-color: var(--white);
-  font-family: inherit;
-  font-size: 0.95rem;
+  border: 1px solid #E0E0E0;
+  font-size: 14px;
   color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
 }
 
-.starGroup {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-}
+/* Range Slider */
+.rangeSliderContainer { padding: 0 4px; }
+.rangeSlider { width: 100%; accent-color: var(--primary-teal-dark, #2A7B72); margin-bottom: 8px; }
+.rangeLabels { display: flex; justify-content: space-between; font-size: 12px; color: #6c757d; font-weight: 500; }
 
+/* Checkbox/Radio */
+.checkboxGroup, .radioGroup { display: flex; flex-direction: column; gap: 10px; }
+.checkboxGroup label, .radioGroup label { font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+
+/* Stars */
+.starGroup { display: flex; gap: 8px; flex-wrap: wrap; }
 .starButton {
-  padding: 0.5rem 0.85rem;
-  font-size: 0.85rem;
-  border: 1px solid var(--border-light);
-  background: var(--white);
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  background: white; border: 1px solid #E0E0E0; border-radius: 20px;
+  padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-secondary);
 }
-
-.starButton:hover,
-.starButton.active {
-  background-color: var(--primary-teal-dark);
-  color: var(--white);
-  border-color: var(--primary-teal-dark);
-}
-
-/* --- NEW STYLES --- */
-
-/* Consultation Fee Slider */
-.rangeSliderContainer {
-  padding: 0.5rem 0.25rem;
-}
-.rangeSlider {
-  width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  background: var(--border-light);
-  outline: none;
-  border-radius: 2px;
-}
-.rangeSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: var(--primary-teal-dark);
-  border-radius: 50%;
-  cursor: pointer;
-}
-.rangeSlider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: var(--primary-teal-dark);
-  border-radius: 50%;
-  cursor: pointer;
-}
-.rangeLabels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-top: 0.5rem;
-}
-
-/* Date Input */
-.dateInputWrapper {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-  background-color: var(--white);
-  padding: 0.75rem;
-}
-.dateInput {
-  border: none;
-  outline: none;
-  flex-grow: 1;
-  font-family: inherit;
-  font-size: 0.95rem;
-  color: var(--text-primary);
-}
-.dateInput::placeholder {
-  color: var(--text-secondary);
-}
-.dateIcon {
-  color: var(--text-secondary);
-  margin-left: 0.5rem;
-}
-
-/* Checkbox and Radio Groups */
-.checkboxGroup,
-.radioGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.checkboxGroup label,
-.radioGroup label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  cursor: pointer;
-}
-
-.checkboxGroup input,
-.radioGroup input {
-  /* You can add custom styles for checkboxes/radios here */
-  cursor: pointer;
-}
+.activeStar { background-color: var(--primary-teal-dark, #2A7B72); color: white; border-color: var(--primary-teal-dark, #2A7B72); }
 
 /* --- Results Section --- */
 .resultsSection {
-  flex: 1;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 20px;
+  min-width: 0; /* Prevents flex children from overflowing */
 }
 
-/* --- Doctor Card --- */
+/* --- DOCTOR CARD (Matches Image) --- */
 .doctorCard {
-  display: flex;
-  gap: 1.5rem;
   background-color: var(--white);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border: 1px solid #E0E0E0;
+  border-radius: 16px;
+  padding: 24px; /* MATCHES SIDEBAR PADDING */
+  display: flex;
+  gap: 24px;
+  transition: box-shadow 0.2s;
 }
 
-.doctorInfo {
-  flex: 1.5;
+.doctorCard:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* 1. Left: Avatar & Link */
+.doctorLeft {
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  width: 100px;
 }
 
 .doctorImage {
@@ -239,129 +149,151 @@
   height: 100px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--border-light);
+  border: 1px solid #f0f0f0;
 }
 
-.doctorDetails {
+.viewProfileLink {
+  color: var(--primary-teal-dark, #2A7B72);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.viewProfileLink:hover { text-decoration: underline; }
+
+/* 2. Middle: Info */
+.doctorMiddle {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .doctorName {
-  margin: 0;
-  font-size: 1.25rem;
-  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 700;
+  color: #1B3B38; /* Dark Green/Black */
+  margin: 0 0 4px 0;
 }
 
 .doctorSpeciality {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--primary-teal-dark);
+  font-size: 14px;
   font-weight: 600;
+  color: #4C6764; /* Greyish Teal */
+  margin: 0 0 12px 0;
 }
 
-.doctorMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-top: 0.5rem;
-}
-
-.rating {
+.ratingRow {
   display: flex;
   align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #333;
 }
 
-.starIcon {
-  color: #f5a623; /* Yellow for star */
-  fill: #f5a623;
-  margin-right: 0.25rem;
+.starIcon { fill: #2A7B72; color: #2A7B72; width: 16px; height: 16px; }
+.reviewCount { color: #4C6764; font-weight: 400; }
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .metaItem {
+  font-size: 14px;
+  color: #4C6764;
+  font-weight: 500;
+}
+
+/* 3. Right: Availability Grid */
+.doctorRight {
+  width: 340px; /* Fixed width to hold 4 cols */
+  flex-shrink: 0;
   display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.viewProfileButton {
-  background: none;
-  border: none;
-  color: var(--primary-teal-dark);
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-top: 0.5rem;
-  padding: 0;
-  text-align: left;
-  width: fit-content;
-}
-
-.doctorAvailability {
-  flex: 1;
-  min-width: 320px; /* Ensure availability grid has space */
+  flex-direction: column;
 }
 
 .availabilityHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 12px;
 }
 
 .availabilityHeader h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1B3B38;
   margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
 }
 
 .viewAllLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-teal-dark, #2A7B72);
+  text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--primary-teal-dark);
+  gap: 2px;
 }
 
+/* Grid for Slots */
 .availabilityGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 8px;
 }
 
+/* Slot Styling - Pill Shape */
 .availabilitySlot {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 0.5rem;
-  border-radius: 8px;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 4px;
+  border-radius: 12px; /* Rounded corners */
+  min-height: 60px;
   text-align: center;
 }
 
+/* Available: Light Teal BG */
+.available {
+  background-color: #D4EBE8; 
+  color: #1B3B38;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.available:hover { background-color: #C1E0DC; }
+
+/* Unavailable: Grey BG */
+.unavailable {
+  background-color: #F3F4F6;
+  color: #9CA3AF;
+  cursor: default;
+}
+
 .slotDate {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  line-height: 1.2;
 }
 
 .slotCount {
-  font-size: 0.8rem;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
-.available {
-  background-color: #e0f2f1; /* Light teal */
-  color: var(--primary-teal-dark);
-  border: 1px solid #b2dfdb;
-}
-
-.unavailable {
-  background-color: #f1f3f5; /* Light gray */
-  color: #adb5bd; /* Gray text */
-  border: 1px solid #e9ecef;
+@media (max-width: 1100px) {
+  .doctorCard { flex-direction: column; }
+  .doctorLeft { flex-direction: row; width: 100%; justify-content: flex-start; }
+  .doctorRight { width: 100%; }
+  .availabilityGrid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
 }

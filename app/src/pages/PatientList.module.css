@@ -111,3 +111,128 @@
 
 .stable { color: #333; }
 .stable::before { background-color: #2A7B72; } /* Teal */
+.filterContainer {
+    display: flex;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.filterChip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #E0E0E0;
+    background: white;
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filterChip:hover { background: #f8f9fa; }
+
+.filterChip.active {
+    background-color: #E3F9F7; /* Light Teal Background */
+    color: #2A7B72; /* Teal Text */
+    border-color: #2A7B72;
+}
+
+/* Status Indicators */
+.statusDot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.statusCritical { color: #D94C4C; }
+.dotCritical { background-color: #D94C4C; }
+
+.statusExamining { color: #FFA500; }
+.dotExamining { background-color: #FFA500; }
+
+.statusStable { color: #2A7B72; }
+.dotStable { background-color: #2A7B72; }
+
+.rowLink {
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+.rowLink:hover {
+    background-color: #F9F9F9;
+}
+.container {
+    width: 100%;
+}
+
+/* Filter Chips */
+.filterContainer {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.filterChip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #E0E0E0;
+    background: white;
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.filterChip:hover {
+    background: #f8f9fa;
+}
+
+.filterChip.active {
+    background-color: #E3F9F7; /* Light Teal */
+    color: #2A7B72; /* Teal */
+    border-color: #2A7B72;
+}
+
+/* Close 'x' inside chip */
+.closeIcon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* Status Styles */
+.statusCell {
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.critical { color: #D94C4C; }
+.dotCritical { background-color: #D94C4C; }
+
+.examining { color: #FFA500; }
+.dotExamining { background-color: #FFA500; }
+
+.stable { color: #2A7B72; }
+.dotStable { background-color: #2A7B72; }
+
+/* Table Row Interaction */
+.rowLink {
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+.rowLink:hover {
+    background-color: #F9F9F9;
+}

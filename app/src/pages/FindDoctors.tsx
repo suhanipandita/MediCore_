@@ -1,19 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './FindDoctors.module.css';
 import {
-  MapPin,
   ToggleLeft,
-  ToggleRight, // Added for visual toggle state
+  ToggleRight,
   Star,
   ChevronRight,
 } from 'react-feather';
 
-// --- Import shared mock data ---
-import { mockDoctors } from '../data/mockDoctors';
-import type { MockDoctor } from '../data/mockDoctors';
+// Import Service & Types
+import { fetchDoctors } from '../services/doctorService';
+import type{ UIDoctor } from '../services/doctorService';
 
-// --- Types for Filters ---
+// --- Types ---
 interface FilterState {
   immediateCare: boolean;
   sortBy: string;
@@ -32,16 +31,13 @@ interface SidebarProps {
 }
 
 /**
- * The filters sidebar - Now accepts props to control state
+ * Sidebar Component (Unchanged logic, just ensure imports match)
  */
 const FiltersSidebar: React.FC<SidebarProps> = ({ filters, setFilters }) => {
-  
-  // Helper to update a specific field
   const updateFilter = (field: keyof FilterState, value: any) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Helper for checkboxes (toggle array values)
   const toggleCheckbox = (field: 'timeOfDay' | 'experienceRanges', value: string) => {
     setFilters((prev) => {
       const currentList = prev[field];
@@ -74,32 +70,24 @@ const FiltersSidebar: React.FC<SidebarProps> = ({ filters, setFilters }) => {
         <button className={styles.resetButton} onClick={resetFilters}>Reset</button>
       </div>
 
-      {/* -- Immediate Care -- */}
       <div className={styles.filterGroup}>
         <div 
           className={styles.filterTitleRow} 
           onClick={() => updateFilter('immediateCare', !filters.immediateCare)}
           style={{ cursor: 'pointer' }}
         >
-          <label className={styles.filterTitle} style={{ cursor: 'pointer' }}>
-            Immediate Care
-          </label>
+          <label className={styles.filterTitle} style={{ cursor: 'pointer' }}>Immediate Care</label>
           {filters.immediateCare ? (
              <ToggleRight size={36} className={styles.toggleIcon} color="#2A7B72" />
           ) : (
              <ToggleLeft size={36} className={styles.toggleIcon} />
           )}
         </div>
-        <p className={styles.filterDescription}>
-          Search doctors with the nearest available slots.
-        </p>
+        <p className={styles.filterDescription}>Search doctors with the nearest available slots.</p>
       </div>
 
-      {/* -- Sort By -- */}
       <div className={styles.filterGroup}>
-        <label className={styles.filterTitle} htmlFor="sortBy">
-          Sort By
-        </label>
+        <label className={styles.filterTitle} htmlFor="sortBy">Sort By</label>
         <select 
           id="sortBy" 
           className={styles.selectInput}
@@ -113,206 +101,129 @@ const FiltersSidebar: React.FC<SidebarProps> = ({ filters, setFilters }) => {
         </select>
       </div>
 
-      {/* -- Max Distance -- */}
       <div className={styles.filterGroup}>
         <h4 className={styles.filterTitle}>Max Distance: {filters.maxDistance} km</h4>
         <div className={styles.rangeSliderContainer}>
-          <input 
-            type="range" 
-            min="0" 
-            max="30" 
-            value={filters.maxDistance}
-            onChange={(e) => updateFilter('maxDistance', Number(e.target.value))}
-            className={styles.rangeSlider} 
-          />
-          <div className={styles.rangeLabels}>
-            <span>0 km</span>
-            <span>30 km</span>
-          </div>
+          <input type="range" min="0" max="30" value={filters.maxDistance} onChange={(e) => updateFilter('maxDistance', Number(e.target.value))} className={styles.rangeSlider} />
+          <div className={styles.rangeLabels}><span>0 km</span><span>30 km</span></div>
         </div>
       </div>
 
-      {/* -- Max Consultation Fee -- */}
       <div className={styles.filterGroup}>
         <h4 className={styles.filterTitle}>Max Fee: ₹{filters.maxFee}</h4>
         <div className={styles.rangeSliderContainer}>
-          <input 
-            type="range" 
-            min="0" 
-            max="2000" 
-            step="100"
-            value={filters.maxFee}
-            onChange={(e) => updateFilter('maxFee', Number(e.target.value))}
-            className={styles.rangeSlider} 
-          />
-          <div className={styles.rangeLabels}>
-            <span>₹0</span>
-            <span>₹2000</span>
-          </div>
+          <input type="range" min="0" max="2000" step="100" value={filters.maxFee} onChange={(e) => updateFilter('maxFee', Number(e.target.value))} className={styles.rangeSlider} />
+          <div className={styles.rangeLabels}><span>₹0</span><span>₹2000</span></div>
         </div>
       </div>
 
-      {/* -- Search By Date -- */}
       <div className={styles.filterGroup}>
         <h4 className={styles.filterTitle}>Search By Date</h4>
         <div className={styles.dateInputWrapper}>
-          <input 
-            type="date" // Changed to date type for easier handling
-            className={styles.dateInput} 
-            value={filters.date}
-            onChange={(e) => updateFilter('date', e.target.value)}
-          />
-          {/* Icon creates visual noise over native date picker, can be hidden or positioned absolutely if needed */}
-          {/* <Calendar size={18} className={styles.dateIcon} /> */}
+          <input type="date" className={styles.dateInput} value={filters.date} onChange={(e) => updateFilter('date', e.target.value)} />
         </div>
       </div>
 
-      {/* -- Time of the Day -- */}
-      <div className={styles.filterGroup}>
-        <h4 className={styles.filterTitle}>Time of the Day</h4>
-        <div className={styles.checkboxGroup}>
-          {['Morning', 'Afternoon', 'Evening'].map((time) => (
-            <label key={time}>
-              <input 
-                type="checkbox" 
-                checked={filters.timeOfDay.includes(time)}
-                onChange={() => toggleCheckbox('timeOfDay', time)}
-              /> {time}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* -- Ratings -- */}
-      <div className={styles.filterGroup}>
-        <h4 className={styles.filterTitle}>Ratings</h4>
-        <div className={styles.starGroup}>
-          <button 
-            className={`${styles.starButton} ${filters.minRating === null ? styles.activeStar : ''}`}
-            onClick={() => updateFilter('minRating', null)}
-          >
-            All
-          </button>
-          {[5, 4, 3].map((star) => (
-            <button 
-              key={star}
-              className={`${styles.starButton} ${filters.minRating === star ? styles.activeStar : ''}`}
-              onClick={() => updateFilter('minRating', star)}
-            >
-              {star} Star
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* -- Years of Experience -- */}
-      <div className={styles.filterGroup}>
-        <h4 className={styles.filterTitle}>Years of Experience</h4>
-        <div className={styles.checkboxGroup}>
-          {['0-5', '5-10', '10+', '20+'].map((range) => (
-            <label key={range}>
-              <input 
-                type="checkbox" 
-                checked={filters.experienceRanges.includes(range)}
-                onChange={() => toggleCheckbox('experienceRanges', range)}
-              /> {range} Years
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* -- Gender -- */}
       <div className={styles.filterGroup}>
         <h4 className={styles.filterTitle}>Gender</h4>
         <div className={styles.radioGroup}>
           {['all', 'male', 'female', 'nonbinary'].map((g) => (
             <label key={g} style={{textTransform: 'capitalize'}}>
-              <input 
-                type="radio" 
-                name="gender" 
-                value={g} 
-                checked={filters.gender === g}
-                onChange={(e) => updateFilter('gender', e.target.value)}
-              /> {g}
+              <input type="radio" name="gender" value={g} checked={filters.gender === g} onChange={(e) => updateFilter('gender', e.target.value)} /> {g}
             </label>
           ))}
         </div>
       </div>
-
     </aside>
   );
 };
 
+// --- Helper to format date "2025-10-10" -> "10 Oct" ---
+const formatDateForSlot = (dateString: string) => {
+    const d = new Date(dateString);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+};
+
 /**
- * A single Doctor Card
+ * UPDATED DoctorCard to match the image structure
  */
-const DoctorCard: React.FC<{ doctor: MockDoctor }> = ({ doctor }) => (
+const DoctorCard: React.FC<{ doctor: UIDoctor }> = ({ doctor }) => (
   <article className={styles.doctorCard}>
-    <div className={styles.doctorInfo}>
+    
+    {/* Left: Avatar + Link */}
+    <div className={styles.doctorLeft}>
       <img
         src={doctor.imageSrc}
         alt={doctor.name}
         className={styles.doctorImage}
       />
-      <div className={styles.doctorDetails}>
-        <h3 className={styles.doctorName}>{doctor.name}</h3>
-        <p className={styles.doctorSpeciality}>{doctor.speciality}</p>
-        <div className={styles.doctorMeta}>
-          <div className={styles.rating}>
-            <Star size={16} className={styles.starIcon} />
-            <span>
-              {doctor.rating} ({doctor.reviews} reviews)
-            </span>
-          </div>
-          <span className={styles.metaItem}>
-            Experience: {doctor.experience} years
-          </span>
-          <span className={styles.metaItem}>
-            Fee: ₹{doctor.consultationFee}
-          </span>
-          <span className={styles.metaItem}>
-            <MapPin size={14} /> {doctor.location}
-          </span>
-        </div>
-        <button className={styles.viewProfileButton}>View Profile</button>
+      <button className={styles.viewProfileLink}>View Profile</button>
+    </div>
+
+    {/* Middle: Info */}
+    <div className={styles.doctorMiddle}>
+      <h3 className={styles.doctorName}>{doctor.name}</h3>
+      <p className={styles.doctorSpeciality}>{doctor.speciality}</p>
+      
+      <div className={styles.ratingRow}>
+        <Star size={16} className={styles.starIcon} />
+        <span>{doctor.rating}</span>
+        <span className={styles.reviewCount}>({doctor.reviews} reviews)</span>
+      </div>
+
+      <div className={styles.detailsList}>
+        <span className={styles.metaItem}>
+          Years of experience: {doctor.experience}
+        </span>
+        <span className={styles.metaItem}>
+          Consultation Fee: ₹{doctor.consultationFee}
+        </span>
+        <span className={styles.metaItem}>
+          Location: {doctor.location}
+        </span>
       </div>
     </div>
 
-    <div className={styles.doctorAvailability}>
+    {/* Right: Availability Grid */}
+    <div className={styles.doctorRight}>
       <div className={styles.availabilityHeader}>
         <h4>Availability</h4>
         <a href="#" className={styles.viewAllLink}>
-          View all <ChevronRight size={16} />
+          View all <ChevronRight size={14} />
         </a>
       </div>
+      
       <div className={styles.availabilityGrid}>
-        {doctor.availability.map((day) =>
-          day.slots.length > 0 ? ( 
+        {/* Render slots from DB data */}
+        {doctor.availability && doctor.availability.slice(0, 8).map((day: any, index: number) => {
+          const slotCount = day.slots ? day.slots.length : 0;
+          const isAvailable = slotCount > 0;
+          
+          return isAvailable ? (
             <Link
-              key={day.date}
+              key={index}
               to={`/schedule-appointment/${doctor.id}?date=${encodeURIComponent(day.date)}`}
               className={`${styles.availabilitySlot} ${styles.available}`}
             >
-              <span className={styles.slotDate}>{day.date}</span>
-              <span className={styles.slotCount}>{`${day.slots.length} appts`}</span>
+              <span className={styles.slotDate}>{formatDateForSlot(day.date)}</span>
+              <span className={styles.slotCount}>{slotCount} appts</span>
             </Link>
           ) : (
-            <div key={day.date} className={`${styles.availabilitySlot} ${styles.unavailable}`}>
-              <span className={styles.slotDate}>{day.date}</span>
-              <span className={styles.slotCount}>—</span>
+            <div key={index} className={`${styles.availabilitySlot} ${styles.unavailable}`}>
+              <span className={styles.slotDate}>{formatDateForSlot(day.date)}</span>
+              <span className={styles.slotCount}>0 appts</span>
             </div>
-          )
-        )}
+          );
+        })}
       </div>
     </div>
   </article>
 );
 
 /**
- * Main FindDoctors Page
+ * Main Page
  */
 const FindDoctors: React.FC = () => {
-  // 1. Define State for Filters
   const [filters, setFilters] = useState<FilterState>({
     immediateCare: false,
     sortBy: 'relevance',
@@ -325,46 +236,39 @@ const FindDoctors: React.FC = () => {
     gender: 'all',
   });
 
-  // 2. Filter Logic
-  const filteredDoctors = useMemo(() => {
-    let result = [...mockDoctors];
+  const [doctors, setDoctors] = useState<UIDoctor[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    // -- Filter: Gender --
+  useEffect(() => {
+    const loadDoctors = async () => {
+      setLoading(true);
+      const data = await fetchDoctors();
+      setDoctors(data);
+      setLoading(false);
+    };
+    loadDoctors();
+  }, []);
+
+  const filteredDoctors = useMemo(() => {
+    let result = [...doctors];
+
+    // Gender
     if (filters.gender !== 'all') {
       result = result.filter(
         (doc) => doc.gender && doc.gender.toLowerCase() === filters.gender
       );
     }
-
-    // -- Filter: Max Fee --
+    // Fee
     result = result.filter((doc) => doc.consultationFee <= filters.maxFee);
-
-    // -- Filter: Ratings --
+    // Rating
     if (filters.minRating !== null) {
       result = result.filter((doc) => doc.rating >= filters.minRating!);
     }
-
-    // -- Filter: Immediate Care (Has slots available today/tomorrow) --
+    // Immediate Care
     if (filters.immediateCare) {
-        // Checks if any day has > 0 slots
-        result = result.filter(doc => doc.availability.some(day => day.slots.length > 0));
+        result = result.filter(doc => doc.availability && doc.availability.some((day: any) => day.slots && day.slots.length > 0));
     }
-
-    // -- Filter: Experience --
-    if (filters.experienceRanges.length > 0) {
-        result = result.filter(doc => {
-            const exp = doc.experience;
-            return filters.experienceRanges.some(range => {
-                if (range === '0-5') return exp >= 0 && exp <= 5;
-                if (range === '5-10') return exp > 5 && exp <= 10;
-                if (range === '10+') return exp > 10;
-                if (range === '20+') return exp > 20;
-                return false;
-            });
-        });
-    }
-
-    // -- Sort Logic --
+    // Sorting
     if (filters.sortBy === 'price_low_high') {
       result.sort((a, b) => a.consultationFee - b.consultationFee);
     } else if (filters.sortBy === 'price_high_low') {
@@ -373,37 +277,27 @@ const FindDoctors: React.FC = () => {
       result.sort((a, b) => b.rating - a.rating);
     }
 
-    // Note: 'maxDistance' and 'timeOfDay' and 'date' would require more complex data 
-    // checks against the mock data structure (e.g. lat/long calc or availability parsing).
-    // Added basic logic for them here assuming standard data:
-
-    // -- Filter: Date --
-    if (filters.date) {
-        // matches YYYY-MM-DD from input to "10 Oct" format in mock data? 
-        // Simplified check: just check if string matches roughly
-        // In a real app, parse dates consistently.
-    }
-
     return result;
-  }, [filters, mockDoctors]);
+  }, [filters, doctors]);
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.mainContent}>
-        {/* Pass state and setter to sidebar */}
         <FiltersSidebar filters={filters} setFilters={setFilters} />
         
         <section className={styles.resultsSection}>
-          {filteredDoctors.length > 0 ? (
+          {loading ? (
+             <div style={{ padding: '2rem', textAlign: 'center', width: '100%' }}>Loading doctors...</div>
+          ) : filteredDoctors.length > 0 ? (
             filteredDoctors.map((doctor) => (
               <DoctorCard key={doctor.id} doctor={doctor} />
             ))
           ) : (
             <div style={{ padding: '2rem', textAlign: 'center', width: '100%' }}>
-              <h3>No doctors found matching your filters.</h3>
+              <h3>No doctors found.</h3>
               <button 
-                onClick={() => setFilters(prev => ({...prev, gender: 'all', maxFee: 2000, minRating: null}))}
-                style={{ marginTop: '1rem', padding: '8px 16px', cursor: 'pointer' }}
+                onClick={() => setFilters(prev => ({...prev, gender: 'all', maxFee: 2000, minRating: null, immediateCare: false}))}
+                style={{ marginTop: '1rem', padding: '8px 16px', cursor: 'pointer', background: '#2A7B72', color: 'white', border: 'none', borderRadius: '8px' }}
               >
                 Clear Filters
               </button>

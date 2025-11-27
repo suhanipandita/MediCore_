@@ -20,18 +20,26 @@ import PasswordReset from './pages/PasswordReset';
 import FindDoctors from './pages/FindDoctors';
 import ScheduleAppointment from './pages/ScheduleAppointment';
 import ReviewConfirm from './pages/ReviewConfirm';
+import MedicalRecords from './pages/MedicalRecords';
+import Inventory from './pages/Inventory'; // Nurse Inventory
+import AdminInventory from './pages/AdminInventory'; // Admin Inventory
+import InventoryItemDetail from './pages/InventoryItemDetail'; // Admin Item Detail
 
 // --- Dashboards ---
 import Dashboard from './pages/Dashboard'; // Patient
 import DoctorDashboard from './pages/DoctorDashboard'; // Doctor
 import NurseDashboard from './pages/NurseDashboard'; // Nurse
 import AdminDashboard from './pages/AdminDashboard';
+import Billing from './pages/Billing';
+import NewInvoice from './pages/Newinvoice';
 
 // --- Features ---
 import PatientAppointments from './pages/PatientAppointments';
 import Appointments from './pages/Appointments';
 import PatientList from './pages/PatientList';
 import PatientProfile from './pages/PatientProfile';
+import StaffManagement from './pages/StaffManagement';
+import StaffProfile from './pages/StaffProfile';
 
 // --- Signups ---
 import SignupPatient from './pages/SignupPatient';
@@ -52,12 +60,15 @@ const Placeholder = ({ title }: { title: string }) => (
 function App() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { session, isLoading } = useAppSelector((state) => state.auth);
+  const { session, isLoading, profile } = useAppSelector((state) => state.auth);
+
+  // --- FIX: robust role detection ---
+  // Uses profile if available, otherwise falls back to session metadata
+  const userRole = (profile?.role || session?.user?.user_metadata?.role || '').toLowerCase();
 
   useEffect(() => {
     let mounted = true;
 
-    // Helper to fetch profile
     const fetchProfile = async (userId: string) => {
       try {
         const { data, error } = await supabase
@@ -77,19 +88,14 @@ function App() {
       }
     };
 
-    // Main Initialization Logic
     const initializeAuth = async () => {
       try {
-        // 1. Check current session
         const { data: { session: currentSession }, error } = await supabase.auth.getSession();
-
         if (error) throw error;
 
         if (mounted) {
-          // Update basic auth state
           dispatch(setAuth({ session: currentSession, user: currentSession?.user ?? null }));
 
-          // 2. If logged in, fetch profile details
           if (currentSession?.user) {
             const profileData = await fetchProfile(currentSession.user.id);
             if (mounted) dispatch(setProfile(profileData));
@@ -98,38 +104,31 @@ function App() {
       } catch (error) {
         console.error("Auth initialization failed:", error);
       } finally {
-        // CRITICAL: Always turn off loading when done to prevent white screen
         if (mounted) {
           dispatch(setLoading(false));
         }
       }
     };
 
-    // Start initialization
     initializeAuth();
 
-    // Safety Timeout: Force loading to false after 5 seconds if Supabase hangs
     const timeoutId = setTimeout(() => {
       if (mounted) dispatch(setLoading(false));
     }, 5000);
 
-    // 3. Listen for realtime auth changes (Login, Logout)
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, currentSession) => {
         if (!mounted) return;
 
         const userId = currentSession?.user?.id;
-
         dispatch(setAuth({ session: currentSession, user: currentSession?.user ?? null }));
 
         if (userId) {
-          // Fetch profile in background
           fetchProfile(userId).then(profile => {
             if (mounted) dispatch(setProfile(profile));
           });
         } else {
           dispatch(setProfile(null));
-          // Handle Logout Redirect
           if (window.location.pathname.includes('dashboard')) {
             navigate('/select-role', { replace: true });
           }
@@ -161,30 +160,22 @@ function App() {
 
   return (
     <Routes>
-      {/* --- Group 1: Public-Facing Routes --- */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<LandingPage />} />
       </Route>
 
-      {/* --- Group 2: Auth Routes --- */}
       <Route element={<Outlet />}>
         <Route path="/select-role" element={<RoleSelection />} />
-
-        {/* Patient Flow */}
         <Route path="/login-patient" element={<PatientLogin />} />
         <Route path="/signup-patient" element={<SignupPatient />} />
         <Route path="/signup-password" element={<SignupPassword />} />
         <Route path="/signup-details" element={<SignupDetails />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-
-        {/* Staff Flow */}
         <Route path="/login-staff" element={<StaffLogin />} />
         <Route path="/signup-staff" element={<SignupStaff />} />
         <Route path="/signup-staff-password" element={<SignupStaffPassword />} />
         <Route path="/signup-staff-details" element={<SignupStaffDetails />} />
         <Route path="/forgot-password-staff" element={<Placeholder title="Staff Forgot Password" />} />
-
-        {/* Admin Flow */}
         <Route path="/login-admin" element={<AdminLogin />} />
         <Route path="/signup-admin" element={<Placeholder title="Admin Signup" />} />
         <Route path="/forgot-password-admin" element={<Placeholder title="Admin Forgot Password" />} />
@@ -192,15 +183,24 @@ function App() {
 
       <Route path="/password-reset" element={<PasswordReset />} />
 
-      {/* --- Group 3: Protected Routes --- */}
       <Route element={session ? <DashboardLayout /> : <Navigate to="/select-role" replace />}>
-        {/* Dashboards */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/nurse-dashboard" element={<NurseDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/medical-records" element={<MedicalRecords />} />
+        <Route path="/staff-management" element={<StaffManagement />} />
+        <Route path="/staff/:staffId" element={<StaffProfile />} />
+        <Route path="/billing" element={<Billing />} />
+        <Route path="/billing/new" element={<NewInvoice />} />
+        
+        {/* --- FIX: Use the robust 'userRole' variable here --- */}
+        <Route 
+          path="/inventory" 
+          element={userRole === 'admin' ? <AdminInventory /> : <Inventory />} 
+        />
+        <Route path="/inventory/:itemId" element={<InventoryItemDetail />} />
 
-        {/* Features */}
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/patient-list" element={<PatientList />} />
         <Route path="/patient-profile/:patientId" element={<PatientProfile />} />
@@ -209,9 +209,7 @@ function App() {
         <Route path="/schedule-appointment/:doctorId" element={<ScheduleAppointment />} />
         <Route path="/review-confirm/:doctorId" element={<ReviewConfirm />} />
         <Route path="/medical-records" element={<Placeholder title="Medical Records" />} />
-        <Route path="/billing" element={<Placeholder title="Bills & Payments" />} />
         <Route path="/staff-management" element={<Placeholder title="Staff Management" />} />
-        <Route path="/inventory" element={<Placeholder title="Inventory" />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

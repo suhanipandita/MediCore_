@@ -1,0 +1,124 @@
+.dashboardGrid {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    gap: 24px;
+}
+
+.leftCol, .rightCol {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- Progress Cards --- */
+.progressRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.progressCard {
+    background: white;
+    border: 1px solid #F0F0F0;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.iconBox {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: #E3F9F7;
+    color: #2A7B72;
+    display: grid;
+    place-items: center;
+}
+
+.progressInfo span:first-child {
+    font-size: 13px;
+    color: #6c757d;
+}
+.progressInfo h3 {
+    margin: 4px 0 0 0;
+    font-size: 20px;
+    color: #333;
+}
+
+/* --- Patient Record Form (The Sequence) --- */
+.recordContainer {
+    background: #FAFAFA;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 10px;
+    border: 1px solid #EEE;
+}
+
+.recordStepTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2A7B72;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vitalsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.inputField {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.actionButton {
+    background-color: #2A7B72;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    float: right;
+}
+
+.actionButton:hover {
+    background-color: #236a62;
+}
+
+.selectPatient {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #E0E0E0;
+    margin-bottom: 16px;
+}
+
+/* --- Reminders --- */
+.reminderList li {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F0F0F0;
+}
+.reminderIcon {
+    color: #2A7B72;
+    background: #E3F9F7;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}

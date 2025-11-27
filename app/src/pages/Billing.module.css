@@ -1,0 +1,135 @@
+/* --- Layout --- */
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- Overview Cards --- */
+.overviewGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.statCard {
+    background: white;
+    border: 1px solid #F0F0F0;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.iconBox {
+    width: 48px; height: 48px; 
+    border-radius: 12px; 
+    background: #E3F9F7; 
+    color: #2A7B72;
+    display: grid; 
+    place-items: center;
+}
+
+/* Specific icon box colors */
+.iconPending { background: #E3F9F7; color: #2A7B72; }
+.iconOverdue { background: #FDECEA; color: #D94C4C; }
+
+.statInfo h3 { margin: 0; font-size: 13px; color: #6c757d; font-weight: 500; }
+.statInfo p { margin: 4px 0 0 0; font-size: 24px; font-weight: 700; color: #333; }
+.statChange { font-size: 11px; margin-left: 6px; font-weight: 600; }
+.trendUp { color: #2A7B72; }
+.trendDown { color: #D94C4C; }
+
+/* --- Filters Bar --- */
+.filterBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0; /* Spacing handled by gap in container */
+}
+
+.filterGroup {
+    display: flex;
+    gap: 12px;
+}
+
+.filterChip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #E0E0E0;
+    background: white;
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative; /* For dropdown positioning */
+}
+
+.filterChip:hover { background: #f8f9fa; }
+.filterChip.active { background: white; color: #2A7B72; border-color: #2A7B72; }
+
+/* Dropdown for sub-filters */
+.dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: white;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 8px;
+    z-index: 10;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dropdownItem {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #333;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    border: none;
+    background: none;
+}
+.dropdownItem:hover { background: #F0F8F7; color: #2A7B72; }
+
+.generateBtn {
+    background-color: #3A6E6A;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.generateBtn:hover { background-color: #2A5552; }
+
+/* --- Invoice Table --- */
+.invoiceTable { width: 100%; border-collapse: collapse; }
+.invoiceTable th { text-align: left; font-size: 13px; color: #6c757d; padding: 16px; border-bottom: 1px solid #F0F0F0; font-weight: 500; }
+.invoiceTable td { padding: 16px; font-size: 14px; color: #333; border-bottom: 1px solid #F0F0F0; vertical-align: middle; }
+.tableRow { cursor: pointer; }
+.tableRow:hover { background-color: #F9F9F9; }
+
+/* Status Pills */
+.statusPaid { color: #2A7B72; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.dotPaid { width: 8px; height: 8px; background: #2A7B72; border-radius: 50%; }
+
+.statusPending { color: #F59E0B; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.dotPending { width: 8px; height: 8px; background: #F59E0B; border-radius: 50%; }
+
+.statusOverdue { color: #D94C4C; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.dotOverdue { width: 8px; height: 8px; background: #D94C4C; border-radius: 50%; }

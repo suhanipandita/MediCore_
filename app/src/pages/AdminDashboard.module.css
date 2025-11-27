@@ -192,3 +192,59 @@
         grid-template-columns: 1fr 1fr;
     }
 }
+.dashboardGrid {
+    display: grid;
+    grid-template-columns: 3fr 1fr; /* Main Content | Reminders */
+    gap: 24px;
+}
+
+.mainSection {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Analytics Row */
+.analyticsRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.statCard {
+    background: white; border: 1px solid #F0F0F0; border-radius: 16px; padding: 20px;
+    display: flex; align-items: center; gap: 16px;
+}
+.iconBox {
+    width: 48px; height: 48px; background: #E3F9F7; color: #2A7B72;
+    border-radius: 12px; display: grid; place-items: center;
+}
+.statInfo h3 { margin: 0; font-size: 14px; color: #6c757d; }
+.statInfo p { margin: 4px 0 0 0; font-size: 24px; font-weight: 700; }
+
+/* Middle Row: Usage & Visits */
+.middleRow {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 24px;
+}
+
+.usageCard {
+    background: white; border: 1px solid #F0F0F0; border-radius: 16px; padding: 24px;
+    cursor: pointer; transition: box-shadow 0.2s;
+}
+.usageCard:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+.progressBarContainer { margin-top: 16px; display: flex; flex-direction: column; gap: 16px; }
+.progressLabel { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.progressTrack { width: 100%; height: 8px; background: #F0F0F0; border-radius: 4px; overflow: hidden; }
+.progressFill { height: 100%; background: #2A7B72; border-radius: 4px; }
+
+/* Quick Access */
+.quickAccessRow {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.quickCard {
+    background: white; padding: 16px; border-radius: 12px; border: 1px solid #F0F0F0;
+    display: flex; align-items: center; gap: 12px;
+}

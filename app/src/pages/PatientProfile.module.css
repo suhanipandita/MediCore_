@@ -261,3 +261,101 @@
         text-align: left;
     }
 }
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Grid Layout */
+.topRow {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 24px;
+}
+
+.bottomRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+/* Profile Card */
+.profileCardContent {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+.avatarLarge {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    background-size: cover;
+}
+.profileInfo {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 24px;
+    width: 100%;
+}
+.label { color: #6c757d; font-size: 14px; }
+.value { font-weight: 600; color: #333; font-size: 14px; text-align: right;}
+
+/* Appointment Info Cards */
+.apptGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+.miniCard {
+    border: 1px solid #F0F0F0;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fff;
+}
+.miniIcon {
+    width: 32px; height: 32px; background: #E3F9F7; color: #2A7B72;
+    border-radius: 8px; display: grid; place-items: center; margin-bottom: 12px;
+}
+.miniLabel { font-size: 12px; color: #888; display: block; margin-bottom: 4px;}
+.miniValue { font-size: 14px; font-weight: 600; color: #333; }
+
+/* Vital Signs Grid */
+.vitalsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+.vitalCard {
+    border: 1px solid #F0F0F0;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fff;
+    position: relative;
+}
+.editBtn {
+    position: absolute; top: 16px; right: 16px;
+    color: #2A7B72; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: none;
+}
+.vitalIcon {
+    width: 40px; height: 40px; background: #F0F8F7; color: #2A7B72;
+    border-radius: 50%; display: grid; place-items: center; margin-bottom: 16px;
+}
+.vitalLabel { font-size: 13px; color: #6c757d; display: block; margin-bottom: 4px; }
+.vitalValue { font-size: 18px; font-weight: 700; color: #333; }
+
+/* Nurse Notes */
+.timeline {
+    list-style: none; padding: 0; margin: 0;
+    border-left: 1px solid #E0E0E0; margin-left: 8px;
+}
+.timelineItem {
+    padding-left: 20px; position: relative; margin-bottom: 24px;
+}
+.timelineItem::before {
+    content: ''; position: absolute; left: -5px; top: 6px;
+    width: 9px; height: 9px; background: #E0E0E0; border-radius: 50%;
+}
+.noteText { font-size: 13px; color: #333; margin: 0 0 4px 0; line-height: 1.5; }
+.noteDate { font-size: 11px; color: #888; display: block; text-align: right; }

@@ -1,0 +1,212 @@
+.container {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Left Form | Right Preview */
+    gap: 24px;
+    align-items: start;
+}
+
+.leftSection {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.pageTitle { font-size: 24px; font-weight: 700; margin: 0; }
+
+/* Info Cards Row */
+.infoRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.infoCard {
+    background: white;
+    border: 1px solid #F0F0F0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.cardTitle {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.infoLine {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+.label { color: #6c757d; }
+.value { font-weight: 600; color: #333; }
+
+/* Item List */
+.itemSection {
+    background: white;
+    border: 1px solid #F0F0F0;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.itemHeader {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 40px;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.itemRow {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 40px;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #E0E0E0;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+}
+.input:focus { border-color: #3A6E6A; }
+
+.qtyControl {
+    display: flex;
+    align-items: center;
+    border: 1px solid #E0E0E0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.qtyBtn {
+    width: 32px; height: 100%; background: #F9F9F9; border: none; cursor: pointer; font-weight: 700;
+}
+.qtyVal {
+    flex: 1; text-align: center; font-size: 14px; font-weight: 600;
+}
+
+.deleteBtn {
+    background: none; border: none; cursor: pointer; color: #D94C4C;
+    display: grid; place-items: center; height: 100%;
+}
+
+.addItemBtn {
+    color: #3A6E6A;
+    background: none;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Totals Section */
+.totalsSection {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    width: 50%;
+    margin-left: auto;
+}
+
+.totalRow {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 14px;
+}
+
+.addLink {
+    color: #3A6E6A; cursor: pointer; font-weight: 600;
+}
+
+.finalTotal {
+    font-size: 18px; font-weight: 700; color: #333; margin-top: 8px;
+}
+
+/* --- Preview Panel --- */
+.previewCard {
+    background: white;
+    border: 1px solid #F0F0F0;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.previewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.paper {
+    background: #F8F9FA;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.paperHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}
+
+.logoIcon { color: #3A6E6A; }
+
+.paperMeta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+    font-size: 13px;
+}
+.metaGroup label { display: block; color: #888; margin-bottom: 4px; }
+.metaGroup p { margin: 0; font-weight: 600; color: #333; }
+
+.paperTable { width: 100%; font-size: 13px; margin-bottom: 24px; }
+.paperTable th { text-align: left; color: #888; padding-bottom: 8px; }
+.paperTable td { padding: 8px 0; color: #333; font-weight: 500; }
+
+.paperFooter {
+    border-top: 1px solid #E0E0E0;
+    padding-top: 16px;
+}
+.paperRow { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+.paperTotal { font-weight: 700; font-size: 15px; margin-top: 8px; }
+
+/* Action Buttons */
+.actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.btnDraft {
+    padding: 14px; background: white; border: 1px solid #3A6E6A; color: #3A6E6A;
+    border-radius: 10px; font-weight: 600; cursor: pointer;
+}
+.btnSend {
+    padding: 14px; background: #3A6E6A; border: none; color: white;
+    border-radius: 10px; font-weight: 600; cursor: pointer;
+}

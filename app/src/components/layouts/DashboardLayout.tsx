@@ -105,14 +105,29 @@ const DashboardLayout: React.FC = () => {
                         </>
                     )}
 
-                    {/* --- DOCTOR & NURSE LINKS --- */}
-                    {(role === 'doctor' || role === 'nurse') && (
+                    {/* --- DOCTOR LINKS --- */}
+                    {(role === 'doctor') && (
                         <>
                             <NavLink to="/appointments" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
                                 <Calendar size={20} /> <span>Appointments</span>
                             </NavLink>
                             <NavLink to="/patient-list" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
                                 <UserPlus size={20} /> <span>Patient List</span>
+                            </NavLink>
+                        </>
+                    )}
+
+                    {/* --- NURSE LINKS --- */}                    
+                    {(role === 'nurse') && (
+                        <>
+                            <NavLink to="/appointments" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                                <Calendar size={20} /> <span>Appointments</span>
+                            </NavLink>
+                            <NavLink to="/patient-list" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                                <UserPlus size={20} /> <span>Patient List</span>
+                            </NavLink>
+                            <NavLink to="/inventory" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>
+                                <Package size={20} /> <span>Inventory</span>
                             </NavLink>
                         </>
                     )}
